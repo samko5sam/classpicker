@@ -12,7 +12,7 @@ export const Home = () => {
   ];
   useEffect(() => {
     const getData = async () => {
-      const res1131 = await fetch("/data/1131-class-all.json");
+      const res1131 = await fetch("./data/1131-class-all.json");
       const data1131 = await res1131.json();
       setClassData(data1131);
       setShowedData(data1131);
