@@ -6,26 +6,39 @@ import {
   Search,
   UserCircle2,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { preDefinedLocations } from "@/constants/ILocations";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigation } from "react-router-dom";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 type Props = {
   setMapCenter?: React.Dispatch<React.SetStateAction<number[]>>;
   setMapZoom?: React.Dispatch<React.SetStateAction<number>>;
+  hideNavbar?: boolean;
 };
 
-const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom }) => {
+const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false }) => {
+  const location = useLocation()
+  const [isNavbarHidden, setIsNavbarHidden] = useState(hideNavbar);
+  const {open: sidebarOpen} = useSidebar()
+
+  const isMapPath = /^\/map\/?$/.test(location.pathname);
+
+  useEffect(() => {
+    setIsNavbarHidden(sidebarOpen)
+  }, [sidebarOpen])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white rounded-none md:rounded-b-3xl shadow-md py-3 px-4 flex items-center justify-between z-40 h-[60px]">
+    <nav className={`fixed top-0 left-0 right-0 bg-white rounded-none md:rounded-b-3xl shadow-md py-3 px-4 flex items-center justify-between z-40 h-[60px] transition-all duration-300 ${isNavbarHidden ? 'translate-y-[-100%] opacity-0' : ''}`}>
       <div className="flex items-center space-x-4">
-        <button className="text-gray-600 hover:text-gray-800 focus:outline-none">
-          <Menu />
-        </button>
-        <Link to="/map" className="text-gray-600 hover:text-gray-800 focus:outline-none">
-          <MapIcon />
-        </Link>
+        <SidebarTrigger />
+
+        {!isMapPath && (
+          <Link to="/map" className="text-gray-600 hover:text-gray-800 focus:outline-none">
+            <MapIcon />
+          </Link>
+        )}
       </div>
       <div className="flex items-center space-x-4">
         {setMapCenter && (
