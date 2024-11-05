@@ -3,6 +3,7 @@ import { Calendar, Home, Inbox, MapIcon, Search, Settings, User2 } from "lucide-
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -13,6 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Link } from "react-router-dom"
+import FacebookLoginButton from "./FacebookLoginButton"
 
 // Menu items.
 const items = [
@@ -53,6 +55,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <FacebookLoginButton />
+      </SidebarFooter>
     </Sidebar>
   )
 }
