@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const loginAccount = () => {
-    FacebookLoginClient.login((res:LoginResponse) => {
+    FacebookLoginClient.login(() => {
       setIsAuthenticated(true);
       getFbProfile();
     }, {
