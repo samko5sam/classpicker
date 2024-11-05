@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { FacebookLoginClient, LoginResponse, ProfileSuccessResponse } from '@greatsumini/react-facebook-login';
 import { fbAppId } from '@/constants/openKey';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -10,7 +11,6 @@ interface AuthContextType {
 }
 
 const placeholderUser = {
-  email: 'user@example.com',
   picture: {
     data: {
       url: "https://via.placeholder.com/150",
@@ -31,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuthContext = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<ProfileSuccessResponse | null>(placeholderUser);
 
@@ -38,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     FacebookLoginClient.getProfile((res: ProfileSuccessResponse) => {
       setUser(res);
     }, {
-      fields: "email, picture, name"
+      fields: "picture, name"
     })
   }
 
@@ -46,17 +47,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     FacebookLoginClient.logout((res:LoginResponse) => {
       if (res.status === "unknown"){
         setIsAuthenticated(false);
-        setUser(placeholderUser)
+        setUser(placeholderUser);
+        toast({
+          title: "登出成功！"
+        });
       }
     });
   }
 
   const loginAccount = () => {
-    FacebookLoginClient.login(() => {
-      setIsAuthenticated(true);
-      getFbProfile();
+    FacebookLoginClient.login((res: LoginResponse) => {
+      if (res.status === "connected"){
+        setIsAuthenticated(true);
+        getFbProfile();
+        toast({
+          title: "登入成功！"
+        });
+      }
     }, {
-      scope: 'public_profile, email',
+      scope: 'public_profile',
     })
   }
 

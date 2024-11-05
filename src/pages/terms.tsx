@@ -8,7 +8,7 @@ const TermsPage: React.FC = () => {
     <SidebarProvider className="w-full flex-1 h-screen">
       <AppSidebar />
       <Navbar />
-      <div className="container mx-auto py-8 flex-1 pt-[64px]">
+      <div className="container mx-auto py-8 flex-1 pt-[72px]">
         <h1 className="text-2xl font-bold mb-4">Terms of Service</h1>
         <div className="bg-white rounded-lg shadow-md p-6">
           <p>
