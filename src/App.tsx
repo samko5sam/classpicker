@@ -1,4 +1,5 @@
 import { createHashRouter, RouterProvider, LoaderFunction, ActionFunction } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 // https://dev.to/franciscomendes10866/file-based-routing-using-vite-and-react-router-3fdo
 
 interface PageModule {
@@ -48,7 +49,9 @@ const router = createHashRouter(
 
 function App(): JSX.Element {
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 
