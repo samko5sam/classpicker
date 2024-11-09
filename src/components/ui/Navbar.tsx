@@ -40,7 +40,7 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
           </Link>
         )}
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 overflow-x-auto">
         {setMapCenter && (
           <div className="flex flex-row">
             <Button

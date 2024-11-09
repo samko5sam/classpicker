@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import Map, { Marker, Popup } from "react-map-gl/maplibre";
+import LoadingIndicator from "./LoadingIndicator";
 
 export type Pin = {
   latitude: number;
@@ -15,6 +16,7 @@ const MapWithPins = ({ center, zoom, pinData }: {
   pinData?: Pin[];
 }) => {
   const mapRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [viewState, setViewState] = useState({
     longitude: center ? center[0] : 121.5278889480134, // Default longitude
@@ -54,47 +56,51 @@ const MapWithPins = ({ center, zoom, pinData }: {
   }, []);
 
   return (
-    <Map
-      {...viewState}
-      ref={mapRef}
-      onMove={(evt) => {
-        setViewState(evt.viewState)
-      }}
-      style={{ flex: 1 }}
-      mapStyle="https://tiles.openfreemap.org/styles/liberty"
-    >
-      {/* Render markers based on pinData */}
-      {pinData && pinData.map((pin, index) => (
-        <Marker onClick={() => handleMarkerClick(pin)} key={index} latitude={pin.latitude} longitude={pin.longitude}>
-          <div style={{ backgroundColor: "red", width: "10px", height: "10px", borderRadius: "50%" }} />
-          <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px" }}>
-            <strong>{pin.title}</strong>
-            <p>{pin.description}</p>
-          </div>
-        </Marker>
-      ))}
+    <>
+      <LoadingIndicator isShown={loading} />
+      <Map
+        {...viewState}
+        ref={mapRef}
+        onMove={(evt) => {
+          setViewState(evt.viewState)
+        }}
+        style={{ flex: 1 }}
+        mapStyle="https://tiles.openfreemap.org/styles/liberty"
+        onLoad={() => setLoading(false)}
+      >
+        {/* Render markers based on pinData */}
+        {pinData && pinData.map((pin, index) => (
+          <Marker onClick={() => handleMarkerClick(pin)} key={index} latitude={pin.latitude} longitude={pin.longitude}>
+            <div style={{ backgroundColor: "red", width: "10px", height: "10px", borderRadius: "50%" }} />
+            <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px" }}>
+              <strong>{pin.title}</strong>
+              <p>{pin.description}</p>
+            </div>
+          </Marker>
+        ))}
 
-      {selectedMarker && (
-        <Popup
-          latitude={selectedMarker.latitude}
-          longitude={selectedMarker.longitude}
-          onClose={() => setSelectedMarker(null)}
-          closeOnClick={false} // Keeps popup open on map clicks outside of it
-        >
-          <div style={{ padding: "5px", maxWidth: "200px" }}>
-            <h3>{selectedMarker.title}</h3>
-            <p>{selectedMarker.description}</p>
-            {selectedMarker.image && (
-              <img
-                src={selectedMarker.image}
-                alt={selectedMarker.title}
-                style={{ width: "100%", borderRadius: "4px" }}
-              />
-            )}
-          </div>
-        </Popup>
-      )}
-    </Map>
+        {selectedMarker && (
+          <Popup
+            latitude={selectedMarker.latitude}
+            longitude={selectedMarker.longitude}
+            onClose={() => setSelectedMarker(null)}
+            closeOnClick={false} // Keeps popup open on map clicks outside of it
+          >
+            <div style={{ padding: "5px", maxWidth: "200px" }}>
+              <h3>{selectedMarker.title}</h3>
+              <p>{selectedMarker.description}</p>
+              {selectedMarker.image && (
+                <img
+                  src={selectedMarker.image}
+                  alt={selectedMarker.title}
+                  style={{ width: "100%", borderRadius: "4px" }}
+                />
+              )}
+            </div>
+          </Popup>
+        )}
+      </Map>
+    </>
   );
 };
 

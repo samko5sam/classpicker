@@ -15,14 +15,9 @@ const MapPage: React.FC = () => {
     <SidebarProvider className="w-full flex-1 h-screen">
       <AppSidebar />
       <div className='w-full h-screen flex flex-col'>
-      <Navbar setMapCenter={setCenter} setMapZoom={setZoom} />
-      {/* <div className='h-[60px]'></div> */}
-      <MapWithPins center={center} zoom={zoom} pinData={pinData} />
-      
-      <div className='hidden'>
-        <Button onClick={() => setCenter([101, 25])}>Change Center</Button>
-        <Button onClick={() => setZoom(18)}>Change Zoom</Button>
-      </div>
+        <Navbar setMapCenter={setCenter} setMapZoom={setZoom} />
+        {/* <div className='h-[60px]'></div> */}
+        <MapWithPins center={center} zoom={zoom} pinData={pinData} />
       </div>
     </SidebarProvider>
   );
