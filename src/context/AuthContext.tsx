@@ -19,7 +19,7 @@ const placeholderUser = {
       is_silhouette: false
     }
   },
-  name: "Jane Doe"
+  name: "..."
 }
 
 const AuthContext = createContext<AuthContextType>({
