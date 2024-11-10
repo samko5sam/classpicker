@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { preDefinedLocations } from "@/constants/ILocations";
+import { preDefinedLocations } from "@/constants/Locations";
 import { Link, useLocation, useNavigation } from "react-router-dom";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 

@@ -3,11 +3,11 @@ import React from 'react';
 import FacebookLogin, { FacebookLoginClient } from '@greatsumini/react-facebook-login';
 import { Button } from '@/components/ui/button';
 import { fbAppId } from '@/constants/openKey';
-import { useAuthContext } from '@/context/AuthContext';
+import { useGlobalContext } from '@/context/GlobalContext';
 import { FacebookIcon, LogOutIcon } from 'lucide-react';
 
 const FacebookLoginButton: React.FC = () => {
-  const { isAuthenticated, logoutAccount, loginAccount } = useAuthContext();
+  const { isAuthenticated, logoutAccount, loginAccount } = useGlobalContext();
 
   return (
     <>

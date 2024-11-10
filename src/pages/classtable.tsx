@@ -11,6 +11,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Navbar from "@/components/ui/Navbar";
 import { classPeriods } from "@/constants/ClassPeriod";
+import { ClassList } from "@/components/ClassList";
 
 type ScheduleItem = {
   id: string;
@@ -49,6 +50,8 @@ const ClasstablePage: FC = () => {
       <div className="container mx-auto py-8 flex-1 pt-[72px]">
         <Navbar />
         <div>
+          <ClassList />
+
           <h1>課表 {id}</h1>
           <Table>
             <TableHeader>

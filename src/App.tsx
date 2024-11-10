@@ -1,5 +1,5 @@
 import { createHashRouter, RouterProvider, LoaderFunction, ActionFunction } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { GlobalProvider } from "./context/GlobalContext";
 import { Toaster } from "@/components/ui/toaster";
 // https://dev.to/franciscomendes10866/file-based-routing-using-vite-and-react-router-3fdo
 
@@ -50,10 +50,10 @@ const router = createHashRouter(
 
 function App(): JSX.Element {
   return (
-    <AuthProvider>
+    <GlobalProvider>
       <RouterProvider router={router} />
       <Toaster />
-    </AuthProvider>
+    </GlobalProvider>
   );
 }
 

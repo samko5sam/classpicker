@@ -2,11 +2,11 @@ import React from "react";
 import Navbar from "@/components/ui/Navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { useAuthContext } from "@/context/AuthContext";
+import { useGlobalContext } from "@/context/GlobalContext";
 import FacebookLoginButton from "@/components/FacebookLoginButton";
 
 const UserPage: React.FC = () => {
-  const { user } = useAuthContext();
+  const { user } = useGlobalContext();
   return (
     <SidebarProvider className="w-full flex-1 h-screen">
       <AppSidebar />

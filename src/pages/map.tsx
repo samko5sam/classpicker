@@ -1,9 +1,8 @@
 import MapWithPins, { Pin } from '@/components/MapWithPins';
-import { Button } from '@/components/ui/button';
 import Navbar from '@/components/ui/Navbar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from "@/components/AppSidebar"
-import { preDefinedLocations } from '@/constants/ILocations';
+import { preDefinedLocations } from '@/constants/Locations';
 import React, { useState } from 'react';
 
 const MapPage: React.FC = () => {
@@ -16,7 +15,6 @@ const MapPage: React.FC = () => {
       <AppSidebar />
       <div className='w-full h-screen flex flex-col'>
         <Navbar setMapCenter={setCenter} setMapZoom={setZoom} />
-        {/* <div className='h-[60px]'></div> */}
         <MapWithPins center={center} zoom={zoom} pinData={pinData} />
       </div>
     </SidebarProvider>
