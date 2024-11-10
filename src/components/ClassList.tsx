@@ -94,6 +94,7 @@ export const ClassList: React.FC = () => {
           itemsPerPage={itemsPerPage}
           totalPages={totalPages}
           handlePageChange={handlePageChange}
+          enableAddClasses
         />
       )}
     </div>

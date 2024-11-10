@@ -3,6 +3,7 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import { FacebookLoginClient, LoginResponse, ProfileSuccessResponse } from '@greatsumini/react-facebook-login';
 import { fbAppId } from '@/constants/openKey';
 import { useToast } from '@/hooks/use-toast';
+import { Course } from '@/components/ClassList';
 
 interface GlobalContextType {
   isAuthenticated: boolean;
@@ -11,6 +12,8 @@ interface GlobalContextType {
   setClassData: (data: any[]) => void;
   showedData: any[];
   setShowedData: (data: any[]) => void;
+  selectedClasses: Course[];
+  setSelectedClasses: (classes: Course[]) => void;
   logoutAccount?: () => void;
   loginAccount?: () => void;
   loading: boolean;
@@ -36,6 +39,8 @@ const GlobalContext = createContext<GlobalContextType>({
   setClassData: () => {},
   showedData: [],
   setShowedData: () => {},
+  selectedClasses: [],
+  setSelectedClasses: () => {},
   loading: false,
   setLoading: () => {}
 });
@@ -49,6 +54,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [user, setUser] = useState<ProfileSuccessResponse | null>(placeholderUser);
   const [classData, setClassData] = useState([]);
   const [showedData, setShowedData] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   const getFbProfile = () => {
@@ -111,7 +117,14 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     getData();
-  }, [])
+    // Load selected classes from localStorage
+    const storedSelectedClasses = localStorage.getItem('selectedCourses');
+    if (storedSelectedClasses) {
+      setSelectedClasses(JSON.parse(storedSelectedClasses));
+    }
+  }, []);
+
+  // Rest of the GlobalProvider component...
 
   const value = {
     isAuthenticated,
@@ -120,6 +133,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setClassData,
     showedData,
     setShowedData,
+    selectedClasses,
+    setSelectedClasses,
     logoutAccount,
     loginAccount,
     loading,

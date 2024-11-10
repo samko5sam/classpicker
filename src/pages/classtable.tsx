@@ -1,5 +1,5 @@
-import React, { FC, useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { FC, useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Table,
   TableHeader,
@@ -12,6 +12,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import Navbar from "@/components/ui/Navbar";
 import { classPeriods } from "@/constants/ClassPeriod";
 import { ClassList } from "@/components/ClassList";
+import { ClassTable } from "@/components/ClassTable";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 type ScheduleItem = {
   id: string;
@@ -28,20 +30,13 @@ type ScheduleItem = {
 };
 
 const ClasstablePage: FC = () => {
+  const { selectedClasses } = useGlobalContext();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const [classData, setClassData] = useState<ScheduleItem[]>([]);
+  const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
 
   useEffect(() => {
-    // Fetch class data from a backend API or local data source
-    const fetchClassData = async () => {
-      // const response = await fetch(`/api/classes?id=${id}`);
-      // const data = await response.json();
-      // setClassData(data);
-      setClassData(classPeriods);
-    };
-    fetchClassData();
-    console.log(id);
+    console.log("id")
   }, [id]);
 
   return (
@@ -52,6 +47,14 @@ const ClasstablePage: FC = () => {
         <div>
           <ClassList />
 
+          <h2>已選擇的課程</h2>
+          <ClassTable
+            courses={selectedClasses}
+            currentPage={1}
+            itemsPerPage={10}
+            totalPages={Math.ceil(selectedClasses.length / 10)}
+            handlePageChange={(pageNumber) => console.log(`Navigated to page ${pageNumber}`)}
+          />
           <h1>課表 {id}</h1>
           <Table>
             <TableHeader>
