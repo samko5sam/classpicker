@@ -1,9 +1,8 @@
 import {
   MapIcon,
-  Menu,
   MinusCircle,
   PlusCircle,
-  Search,
+  Table2,
   UserCircle2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -24,6 +23,7 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
   const {open: sidebarOpen} = useSidebar()
 
   const isMapPath = /^\/map\/?$/.test(location.pathname);
+  const isClassTablePath = /^\/classtable\/?$/.test(location.pathname);
 
   useEffect(() => {
     setIsNavbarHidden(sidebarOpen)
@@ -37,6 +37,12 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
         {!isMapPath && (
           <Link to="/map" className="text-gray-600 hover:text-gray-800 focus:outline-none">
             <MapIcon />
+          </Link>
+        )}
+
+        {!isClassTablePath && (
+          <Link to="/classtable" className="text-gray-600 hover:text-gray-800 focus:outline-none">
+            <Table2 />
           </Link>
         )}
       </div>
