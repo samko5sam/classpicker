@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { ClassTable } from './ClassTable';
 import { useGlobalContext } from '@/context/GlobalContext';
-import { FilterIcon, Loader2 } from 'lucide-react';
-import PaginationItems from './PaginationItems';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2 } from 'lucide-react';
+import { FilterDropdown, SearchBar } from './SearchAndFilter';
 
-interface Course {
+export interface Course {
   開課序號: number;
   中文課程名稱: string;
   英文課程名稱: string;
@@ -18,11 +14,7 @@ interface Course {
   地點時間: string;
 }
 
-interface ClassTableProps {
-  courses?: Course[];
-}
-
-export const ClassList: React.FC<ClassTableProps> = () => {
+export const ClassList: React.FC = () => {
   const { classData: courses, loading, setLoading } = useGlobalContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -79,44 +71,16 @@ export const ClassList: React.FC<ClassTableProps> = () => {
   return (
     <div>
       <div className="flex items-center mb-4">
-        <Input
-          placeholder="搜尋課程名稱..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="mr-4"
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <FilterDropdown
+          filterDepartment={filterDepartment}
+          setFilterDepartment={setFilterDepartment}
+          departmentSearchTerm={departmentSearchTerm}
+          setDepartmentSearchTerm={setDepartmentSearchTerm}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          departmentOptionsWithAll={departmentOptionsWithAll}
         />
-        <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
-          <DropdownMenuTrigger asChild>
-            <Button className="px-4 py-2 rounded-md">
-              {filterDepartment || "全部系所"} <FilterIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <Input
-              placeholder="搜尋系所..."
-              value={departmentSearchTerm}
-              onChange={(e) => setDepartmentSearchTerm(e.target.value)}
-              className="mb-2"
-            />
-            <ScrollArea className="h-[200px] rounded-md border p-4">
-              {departmentOptionsWithAll.length > 0 ? (
-                departmentOptionsWithAll.map((dept, index) => (
-                  <DropdownMenuItem
-                    key={index}
-                    onClick={() => {
-                      setFilterDepartment(dept === '全部系所' ? '' : dept); 
-                      setShowDropdown(false);
-                    }}
-                  >
-                    {dept}
-                  </DropdownMenuItem>
-                ))
-              ) : (
-                <DropdownMenuItem disabled>無匹配項目</DropdownMenuItem>
-              )}
-            </ScrollArea>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {loading ? (
@@ -124,38 +88,13 @@ export const ClassList: React.FC<ClassTableProps> = () => {
           <Loader2 className="animate-spin" />
         </div>
       ) : (
-        <>
-          <Table className="w-full border rounded">
-            <TableHeader>
-              <TableRow>
-                <TableHead>開課序號</TableHead>
-                <TableHead>課程名稱</TableHead>
-                <TableHead>系所</TableHead>
-                <TableHead>學分</TableHead>
-                <TableHead>教師</TableHead>
-                <TableHead>時間地點</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentCourses.map((course) => (
-                <TableRow key={course.開課序號}>
-                  <TableCell>{course.開課序號}</TableCell>
-                  <TableCell>{course.中文課程名稱} ({course.英文課程名稱})</TableCell>
-                  <TableCell>{course.系所}</TableCell>
-                  <TableCell>{course.學分}</TableCell>
-                  <TableCell>{course.教師}</TableCell>
-                  <TableCell>{course.時間地點}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <PaginationItems
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
+        <ClassTable
+          courses={currentCourses}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
       )}
     </div>
   );
