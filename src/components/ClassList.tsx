@@ -3,6 +3,7 @@ import { ClassTable } from './ClassTable';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { Loader2 } from 'lucide-react';
 import { FilterDropdown, SearchBar } from './SearchAndFilter';
+//import {listorder} from '@/constants/listorder'
 
 export interface Course {
   開課序號: number;
@@ -27,7 +28,8 @@ export const ClassList: React.FC = () => {
   // Get unique departments from the course data
   const departmentOptions = [...new Set(courses.map(course => course.系所).filter(Boolean))];
 
-  // Filter department options based on the department search term
+
+  //Filter department options based on the department search term
   const filteredDepartmentOptions = departmentOptions.filter(department => 
     department.toLowerCase().includes(departmentSearchTerm.toLowerCase())
   );
