@@ -82,7 +82,8 @@ export const ClassTable: React.FC<ClassTableProps> = ({
                 />
               </TableCell>
               <TableCell>{course.開課序號}</TableCell>
-              <TableCell>{course.中文課程名稱} ({course.英文課程名稱})</TableCell>
+              <TableCell>{course.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</TableCell>
+              <TableCell>{course.英文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</TableCell>
               <TableCell>{course.系所}</TableCell>
               <TableCell>{course.學分}</TableCell>
               <TableCell>{course.教師}</TableCell>
