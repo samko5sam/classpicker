@@ -55,33 +55,35 @@ const ClasstablePage: FC = () => {
             totalPages={Math.ceil(selectedClasses.length / 10)}
             handlePageChange={(pageNumber) => console.log(`Navigated to page ${pageNumber}`)}
           />
-          <h1>課表 {id}</h1>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>節次</TableCell>
-                <TableCell>星期一</TableCell>
-                <TableCell>星期二</TableCell>
-                <TableCell>星期三</TableCell>
-                <TableCell>星期四</TableCell>
-                <TableCell>星期五</TableCell>
-                <TableCell>星期六</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {classData.map((classItem) => (
-                <TableRow key={classItem.id}>
-                  <TableCell>{classItem.id}</TableCell>
-                  <TableCell>{classItem.mon}</TableCell>
-                  <TableCell>{classItem.tue}</TableCell>
-                  <TableCell>{classItem.wed}</TableCell>
-                  <TableCell>{classItem.thu}</TableCell>
-                  <TableCell>{classItem.fri}</TableCell>
-                  <TableCell>{classItem.sat}</TableCell>
+          <div className="max-w-[680px] mx-auto mt-4">
+            <h1 className="text-2xl font-semibold">課表 {id}</h1>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableCell>節次</TableCell>
+                  <TableCell>星期一</TableCell>
+                  <TableCell>星期二</TableCell>
+                  <TableCell>星期三</TableCell>
+                  <TableCell>星期四</TableCell>
+                  <TableCell>星期五</TableCell>
+                  <TableCell>星期六</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {classData.map((classItem) => (
+                  <TableRow key={classItem.id} className="text-center">
+                    <TableCell>{classItem.id}</TableCell>
+                    <TableCell>{classItem.mon}</TableCell>
+                    <TableCell>{classItem.tue}</TableCell>
+                    <TableCell>{classItem.wed}</TableCell>
+                    <TableCell>{classItem.thu}</TableCell>
+                    <TableCell>{classItem.fri}</TableCell>
+                    <TableCell>{classItem.sat}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </SidebarProvider>
