@@ -15,18 +15,23 @@ import { ClassList } from "@/components/ClassList";
 import { ClassTable } from "@/components/ClassTable";
 import { useGlobalContext } from "@/context/GlobalContext";
 
+type ScheduleData = {
+  title: string;
+  place?: string;
+}
+
 type ScheduleItem = {
   id: string;
   timeStartMain: string | null;
   timeEndMain: string | null;
   timeStartLinKou: string | null;
   timeEndLinKou: string | null;
-  mon?: string | null;
-  tue?: string | null;
-  wed?: string | null;
-  thu?: string | null;
-  fri?: string | null;
-  sat?: string | null;
+  mon?: ScheduleData | null;
+  tue?: ScheduleData | null;
+  wed?: ScheduleData | null;
+  thu?: ScheduleData | null;
+  fri?: ScheduleData | null;
+  sat?: ScheduleData | null;
 };
 
 const ClasstablePage: FC = () => {
@@ -35,9 +40,74 @@ const ClasstablePage: FC = () => {
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
 
+  const generateRange = (arr) => {
+    // Convert the string values to integers
+    const start = parseInt(arr[0], 10);
+    const end = parseInt(arr[1], 10);
+  
+    // Generate and return the range of numbers from start to end (inclusive)
+    const result = [];
+    for (let i = start; i <= end; i++) {
+      result.push(i.toString());
+    }
+    
+    return result;
+  }
+
+  const parseTimeAndPlace = (timeString: string) => {
+    const days = {
+      '一': 'mon',
+      '二': 'tue',
+      '三': 'wed',
+      '四': 'thu',
+      '五': 'fri',
+      '六': 'sat'
+    };
+    
+    const schedule: { day: string; periods: string[]; place: string; }[] = [];
+    if (!timeString) return [];
+    const parts = timeString.split(',');
+    parts.forEach(part => {
+      if (part.match(/[一二三四五六]/)) {
+        const day = days[part[0]];
+        const periods = generateRange(part.slice(2).split(' ')[0].split("-"));
+        const place = part.slice(2).split(' ').slice(1,3).join(" ");
+        schedule.push({ day, periods, place });
+      }
+    });
+    
+    return schedule;
+  };
+
+  const populateSchedule = () => {
+    const newClassData = [...classPeriods];
+    
+    if (!selectedClasses) return;
+    selectedClasses.forEach(course => {
+      const schedule = parseTimeAndPlace(course.地點時間);
+      schedule.forEach(({ day, periods, place }) => {
+        periods.forEach(period => {
+          const periodIndex = newClassData.findIndex(item => item.id === period);
+          if (periodIndex !== -1) {
+            newClassData[periodIndex] = {
+              ...newClassData[periodIndex],
+              [day]: {
+                title: course.中文課程名稱,
+                place
+              }
+            };
+          }
+        });
+      });
+    });
+    
+    setClassData(newClassData);
+  };
+
   useEffect(() => {
-    console.log("id")
-  }, [id]);
+    populateSchedule();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClasses]);
 
   return (
     <SidebarProvider className="w-full flex-1 h-screen">
@@ -55,30 +125,30 @@ const ClasstablePage: FC = () => {
             totalPages={Math.ceil(selectedClasses.length / 10)}
             handlePageChange={(pageNumber) => console.log(`Navigated to page ${pageNumber}`)}
           />
-          <div className="max-w-[680px] mx-auto mt-4">
+          <div className="max-w-[768px] mx-auto mt-4">
             <h1 className="text-2xl font-semibold">課表 {id}</h1>
-            <Table>
+            <Table className="table-fixed rounded-lg border-collapse border border-gray-200">
               <TableHeader>
                 <TableRow>
                   <TableCell>節次</TableCell>
-                  <TableCell>星期一</TableCell>
-                  <TableCell>星期二</TableCell>
-                  <TableCell>星期三</TableCell>
-                  <TableCell>星期四</TableCell>
-                  <TableCell>星期五</TableCell>
-                  <TableCell>星期六</TableCell>
+                  <TableCell className="border-l border-gray-200">星期一</TableCell>
+                  <TableCell className="border-l border-gray-200">星期二</TableCell>
+                  <TableCell className="border-l border-gray-200">星期三</TableCell>
+                  <TableCell className="border-l border-gray-200">星期四</TableCell>
+                  <TableCell className="border-l border-gray-200">星期五</TableCell>
+                  <TableCell className="border-l border-gray-200">星期六</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {classData.map((classItem) => (
-                  <TableRow key={classItem.id} className="text-center">
+                  <TableRow key={classItem.id} className="text-center h-16">
                     <TableCell>{classItem.id}</TableCell>
-                    <TableCell>{classItem.mon}</TableCell>
-                    <TableCell>{classItem.tue}</TableCell>
-                    <TableCell>{classItem.wed}</TableCell>
-                    <TableCell>{classItem.thu}</TableCell>
-                    <TableCell>{classItem.fri}</TableCell>
-                    <TableCell>{classItem.sat}</TableCell>
+                    <ClassTableCell data={classItem.mon} />
+                    <ClassTableCell data={classItem.tue} />
+                    <ClassTableCell data={classItem.wed} />
+                    <ClassTableCell data={classItem.thu} />
+                    <ClassTableCell data={classItem.fri} />
+                    <ClassTableCell data={classItem.sat} />
                   </TableRow>
                 ))}
               </TableBody>
@@ -89,5 +159,14 @@ const ClasstablePage: FC = () => {
     </SidebarProvider>
   );
 };
+
+const ClassTableCell = ({data}) => {
+  return (
+    <TableCell className="border-l border-gray-200">
+      {data?.title.replace(/(?:\[.*?\]|\(.*?\))/g, '')}<br />
+      <span className="text-xs text-gray-500">{data?.place}</span>
+    </TableCell>
+  )
+}
 
 export default ClasstablePage;
