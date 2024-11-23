@@ -54,7 +54,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [user, setUser] = useState<ProfileSuccessResponse | null>(placeholderUser);
   const [classData, setClassData] = useState([]);
   const [showedData, setShowedData] = useState([]);
-  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
   const getFbProfile = () => {
