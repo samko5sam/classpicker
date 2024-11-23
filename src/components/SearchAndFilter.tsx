@@ -13,6 +13,7 @@ export const SearchBar = ({ searchTerm, setSearchTerm }) => {
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
       className="mr-4"
+      type='search'
     />
   );
 };
