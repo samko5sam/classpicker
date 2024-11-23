@@ -40,7 +40,17 @@ const ClasstablePage: FC = () => {
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
 
+  const periodsTransformObj = {
+    'A': '11',
+    'B': '12',
+    'C': '13',
+    'D': '14'
+  }
+
   const generateRange = (arr) => {
+    arr = arr.map((item) => {
+      return isNaN(parseInt(item)) ? periodsTransformObj[item] : item
+    })
     // Convert the string values to integers
     const start = parseInt(arr[0], 10);
     const end = parseInt(arr[1], 10);
@@ -50,8 +60,12 @@ const ClasstablePage: FC = () => {
     for (let i = start; i <= end; i++) {
       result.push(i.toString());
     }
-    
-    return result;
+    return result.map((item) => {
+      if (parseInt(item) > 10) {
+        return Object.keys(periodsTransformObj).find(key => periodsTransformObj[key] === item)
+      }
+      return item
+    });
   }
 
   const parseTimeAndPlace = (timeString: string) => {
