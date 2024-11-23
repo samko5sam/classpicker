@@ -3,6 +3,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from '@/components/ui/button';
 import { FilterIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { listorder } from '@/constants/listorder';
 
 // Search bar component
 export const SearchBar = ({ searchTerm, setSearchTerm }) => {
@@ -39,23 +40,26 @@ export const FilterDropdown = ({
           value={departmentSearchTerm}
           onChange={(e) => setDepartmentSearchTerm(e.target.value)}
           className="mb-2"
+          type='search'
         />
-        <ScrollArea className="h-[200px] rounded-md border p-4">
-          {departmentOptionsWithAll.length > 0 ? (
-            departmentOptionsWithAll.map((dept, index) => (
-              <DropdownMenuItem
-                key={index}
-                onClick={() => {
-                  setFilterDepartment(dept === '全部系所' ? '' : dept); 
-                  setShowDropdown(false);
-                }}
-              >
-                {dept}
-              </DropdownMenuItem>
-            ))
-          ) : (
-            <DropdownMenuItem disabled>無匹配項目</DropdownMenuItem>
-          )}
+        <ScrollArea className="h-[200px] rounded-md border">
+          <div className='p-4'>
+            {departmentOptionsWithAll.length > 0 ? (
+              departmentOptionsWithAll.map((dept, index) => (
+                <DropdownMenuItem
+                  key={index}
+                  onClick={() => {
+                    setFilterDepartment(dept === '全部系所' ? '' : dept); 
+                    setShowDropdown(false);
+                  }}
+                >
+                  {listorder.filter(item => item.key == dept)[0]?.id} {dept}
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem disabled>無匹配項目</DropdownMenuItem>
+            )}
+          </div>
         </ScrollArea>
       </DropdownMenuContent>
     </DropdownMenu>

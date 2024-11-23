@@ -30,7 +30,8 @@ export const ClassList: React.FC = () => {
 
   //Filter department options based on the department search term
   const filteredDepartmentOptions = departmentOptions.filter(department =>
-    department.toLowerCase().includes(departmentSearchTerm.toLowerCase())
+    department.toLowerCase().includes(departmentSearchTerm.toLowerCase()) ||
+    listorder.filter(item => item.key == department)[0]?.id.toLowerCase().includes(departmentSearchTerm.toLowerCase())
   );
 
   const departmentOptionsWithAll = ['全部系所', ...filteredDepartmentOptions];
@@ -53,7 +54,7 @@ export const ClassList: React.FC = () => {
       (course.英文課程名稱 && course.英文課程名稱.toLowerCase().includes(lowerCaseSearchTerm)) ||
       (course.開課序號 && course.開課序號.toString().toLowerCase().includes(lowerCaseSearchTerm)) ||
       (course.教師 && course.教師.toLowerCase().includes(lowerCaseSearchTerm));
-    const matchesDepartment = filterDepartment ? course.系所 === filterDepartment : true;
+    const matchesDepartment = filterDepartment ? (filterDepartment.includes("學程") ? (course.中文課程名稱.includes(filterDepartment) || course.系所 === filterDepartment): course.系所 === filterDepartment) : true;
     return matchesSearch && matchesDepartment;
   });
 
