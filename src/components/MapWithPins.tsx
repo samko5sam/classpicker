@@ -26,6 +26,8 @@ const MapWithPins = ({ center, zoom, pinData }: {
     zoom: zoom || 16,
   });
 
+  console.log(pinData)
+
   const stopMapMovement = () => {
     if (mapRef.current) {
       mapRef.current.getMap().stop();
@@ -73,8 +75,8 @@ const MapWithPins = ({ center, zoom, pinData }: {
         {/* Render markers based on pinData */}
         {pinData && pinData.map((pin, index) => (
           <Marker onClick={() => handleMarkerClick(pin)} key={index} latitude={pin.latitude} longitude={pin.longitude}>
-            <div style={{ backgroundColor: "red", width: "20px", height: "20px", borderRadius: "50%" }} />
-            {pin.type === "area" && <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px" }}>
+            {pin.type !== "area" && <div style={{ backgroundColor: "red", width: "20px", height: "20px", borderRadius: "50%", borderWidth: "1px", borderColor: "black" }} />}
+            {pin.type === "area" && <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px", borderWidth: "1px", borderColor: "black" }}>
               <strong>{pin.title}</strong>
               <p>{pin.description}</p>
             </div>}
