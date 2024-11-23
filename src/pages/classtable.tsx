@@ -14,6 +14,7 @@ import { classPeriods } from "@/constants/ClassPeriod";
 import { ClassList } from "@/components/ClassList";
 import { ClassTable } from "@/components/ClassTable";
 import { useGlobalContext } from "@/context/GlobalContext";
+import { ToggleSettings } from "@/components/ToggleSettings";
 
 type ScheduleData = {
   title: string;
@@ -39,6 +40,8 @@ const ClasstablePage: FC = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
+  const [showPeriodsTime, setShowPeriodsTime] = useState(false);
+  const [showPlace, setShowPlace] = useState(true);
 
   const periodsTransformObj = {
     'A': '11',
@@ -54,7 +57,7 @@ const ClasstablePage: FC = () => {
     // Convert the string values to integers
     const start = parseInt(arr[0], 10);
     const end = parseInt(arr[1], 10);
-  
+
     // Generate and return the range of numbers from start to end (inclusive)
     const result = [];
     for (let i = start; i <= end; i++) {
@@ -77,7 +80,7 @@ const ClasstablePage: FC = () => {
       '五': 'fri',
       '六': 'sat'
     };
-    
+
     const schedule: { day: string; periods: string[]; place: string; }[] = [];
     if (!timeString) return [];
     const parts = timeString.split(',');
@@ -89,13 +92,13 @@ const ClasstablePage: FC = () => {
         schedule.push({ day, periods, place });
       }
     });
-    
+
     return schedule;
   };
 
   const populateSchedule = () => {
     const newClassData = [...classPeriods];
-    
+
     if (!selectedClasses) return;
     selectedClasses.forEach(course => {
       const schedule = parseTimeAndPlace(course.地點時間);
@@ -114,7 +117,7 @@ const ClasstablePage: FC = () => {
         });
       });
     });
-    
+
     setClassData(newClassData);
   };
 
@@ -141,6 +144,9 @@ const ClasstablePage: FC = () => {
           />
           <div className="max-w-[768px] mx-auto mt-4">
             <h1 className="text-2xl font-semibold">課表 {id}</h1>
+            <div className="mb-2">
+              <ToggleSettings setShowPeriodsTime={setShowPeriodsTime} setShowPlace={setShowPlace} />
+            </div>
             <Table className="table-fixed rounded-lg border-collapse border border-gray-200">
               <TableHeader>
                 <TableRow>
@@ -156,13 +162,13 @@ const ClasstablePage: FC = () => {
               <TableBody>
                 {classData.map((classItem) => (
                   <TableRow key={classItem.id} className="text-center h-16">
-                    <TableCell>{classItem.id}</TableCell>
-                    <ClassTableCell data={classItem.mon} />
-                    <ClassTableCell data={classItem.tue} />
-                    <ClassTableCell data={classItem.wed} />
-                    <ClassTableCell data={classItem.thu} />
-                    <ClassTableCell data={classItem.fri} />
-                    <ClassTableCell data={classItem.sat} />
+                    <TableCell>{classItem.id} {showPeriodsTime && <><br/><span className="text-xs text-gray-500">{classItem.timeStartMain} - {classItem.timeEndMain}</span></>}</TableCell>
+                    <ClassTableCell showPlace={showPlace} data={classItem.mon} />
+                    <ClassTableCell showPlace={showPlace} data={classItem.tue} />
+                    <ClassTableCell showPlace={showPlace} data={classItem.wed} />
+                    <ClassTableCell showPlace={showPlace} data={classItem.thu} />
+                    <ClassTableCell showPlace={showPlace} data={classItem.fri} />
+                    <ClassTableCell showPlace={showPlace} data={classItem.sat} />
                   </TableRow>
                 ))}
               </TableBody>
@@ -174,11 +180,14 @@ const ClasstablePage: FC = () => {
   );
 };
 
-const ClassTableCell = ({data}) => {
+const ClassTableCell = ({data, showPlace}) => {
   return (
     <TableCell className="border-l border-gray-200">
-      {data?.title.replace(/(?:\[.*?\]|\(.*?\))/g, '')}<br />
-      <span className="text-xs text-gray-500">{data?.place}</span>
+      {data?.title.replace(/(?:\[.*?\]|\(.*?\))/g, '')}
+      {showPlace && <>
+        <br />
+        <span className="text-xs text-gray-500">{data?.place}</span>
+      </>}
     </TableCell>
   )
 }
