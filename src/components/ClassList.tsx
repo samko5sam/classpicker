@@ -25,6 +25,18 @@ export const ClassList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
+  // Find Places
+  // const coursePlaces = []
+  // courses.forEach((item) => {
+  //   if (item.地點時間) {
+  //     const place = item.地點時間.split(" ").slice(2,4).join("");
+  //     if (place){
+  //       coursePlaces.push(place);
+  //     }
+  //   };
+  // })
+  // console.log(coursePlaces)
+
   // Get unique departments from the course data
   const departmentOptions = listorder.map(item => item.key);
 

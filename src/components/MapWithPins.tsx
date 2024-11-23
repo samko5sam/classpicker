@@ -8,6 +8,8 @@ export type Pin = {
   longitude: number;
   title?: string;
   description?: string;
+  type?: string;
+  中文課程名稱?: string;
 };
 
 const MapWithPins = ({ center, zoom, pinData }: {
@@ -71,11 +73,11 @@ const MapWithPins = ({ center, zoom, pinData }: {
         {/* Render markers based on pinData */}
         {pinData && pinData.map((pin, index) => (
           <Marker onClick={() => handleMarkerClick(pin)} key={index} latitude={pin.latitude} longitude={pin.longitude}>
-            <div style={{ backgroundColor: "red", width: "10px", height: "10px", borderRadius: "50%" }} />
-            <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px" }}>
+            <div style={{ backgroundColor: "red", width: "20px", height: "20px", borderRadius: "50%" }} />
+            {pin.type === "area" && <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px" }}>
               <strong>{pin.title}</strong>
               <p>{pin.description}</p>
-            </div>
+            </div>}
           </Marker>
         ))}
 
@@ -89,6 +91,7 @@ const MapWithPins = ({ center, zoom, pinData }: {
             <div style={{ padding: "5px", maxWidth: "200px" }}>
               <h3>{selectedMarker.title}</h3>
               <p>{selectedMarker.description}</p>
+              {selectedMarker.中文課程名稱 && <p className="text-xl">{selectedMarker.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</p>}
               {selectedMarker.image && (
                 <img
                   src={selectedMarker.image}
