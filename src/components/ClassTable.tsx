@@ -22,7 +22,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
   enableAddClasses
 }) => {
   const { selectedClasses, setSelectedClasses } = useGlobalContext();
-  const [actionClasses, setActionClasses] = useState([]);
+  const [actionClasses, setActionClasses] = useState<Course[]>([]);
 
   const handleCourseSelect = (course: Course) => {
     if (actionClasses.includes(course)) {
@@ -33,17 +33,28 @@ export const ClassTable: React.FC<ClassTableProps> = ({
   };
 
   const handleAddSelectedCourses = () => {
-    // Perform action with selected courses, e.g. add to class table
     console.log('Adding selected courses:', actionClasses);
 
     // Persist selected courses to localStorage
     localStorage.setItem('selectedCourses', JSON.stringify([...selectedClasses, ...actionClasses]));
-    setSelectedClasses([...selectedClasses, ...actionClasses])
+    setSelectedClasses([...selectedClasses, ...actionClasses]);
+  };
+
+  const handleDeleteSelectedCourses = () => {
+    console.log('Deleting selected courses:', actionClasses);
+
+    // Remove selected courses from global context
+    const updatedSelectedClasses = selectedClasses.filter((c) => !actionClasses.includes(c));
+    localStorage.setItem('selectedCourses', JSON.stringify(updatedSelectedClasses));
+    setSelectedClasses(updatedSelectedClasses);
+
+    // Clear current selection
+    setActionClasses([]);
   };
 
   useEffect(() => {
     setActionClasses([]);
-  }, [currentPage, courses])
+  }, [currentPage, courses]);
 
   return (
     <>
@@ -95,22 +106,33 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         </TableBody>
       </Table>
 
-      {enableAddClasses && (
-        <div className="flex justify-end mt-4">
-          <Button
-            onClick={handleAddSelectedCourses}
-            disabled={actionClasses.length === 0}
-          >
-            加入課表
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-end mt-4 space-x-4">
+  {enableAddClasses ? (
+    <Button
+      onClick={handleAddSelectedCourses}
+      disabled={actionClasses.length === 0}
+    >
+      加入課表
+    </Button>
+  ) : (
+    <Button
+      onClick={handleDeleteSelectedCourses}
+      disabled={actionClasses.length === 0}
+      className="bg-red-500 hover:bg-red-600"
+    >
+      刪除課程
+    </Button>
+  )}
+</div>
 
-      {totalPages > 1 && <PaginationItems
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />}
+
+      {totalPages > 1 && (
+        <PaginationItems
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };
