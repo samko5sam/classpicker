@@ -7,10 +7,9 @@ import { useGlobalContext } from '@/context/GlobalContext';
 
 interface ClassTableProps {
   courses: Course[];
-  currentPage: number;
-  itemsPerPage: number;
-  totalPages: number;
-  handlePageChange: (pageNumber: number) => void;
+  currentPage?: number;
+  totalPages?: number;
+  handlePageChange?: (pageNumber: number) => void;
   enableAddClasses?: boolean;
 }
 

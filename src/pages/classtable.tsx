@@ -137,10 +137,7 @@ const ClasstablePage: FC = () => {
           <h2>已選擇的課程</h2>
           <ClassTable
             courses={selectedClasses}
-            currentPage={1}
-            itemsPerPage={10}
-            totalPages={Math.ceil(selectedClasses.length / 10)}
-            handlePageChange={(pageNumber) => console.log(`Navigated to page ${pageNumber}`)}
+            totalPages={1}
           />
           <div className="max-w-[768px] mx-auto mt-4">
             <h1 className="text-2xl font-semibold">課表 {id}</h1>

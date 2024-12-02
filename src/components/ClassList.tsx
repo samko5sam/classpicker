@@ -105,7 +105,6 @@ export const ClassList: React.FC = () => {
         <ClassTable
           courses={currentCourses}
           currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
           totalPages={totalPages}
           handlePageChange={handlePageChange}
           enableAddClasses
