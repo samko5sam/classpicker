@@ -27,7 +27,7 @@ const MapPage: React.FC = () => {
       // Check if the coordinates are already shifted
       if (shiftedCoordinates.some(coord => coord.latitude === lat && coord.longitude === lon)) {
         // If the coordinate has been seen before, shift it
-        // item.latitude += shiftAmount;
+        item.latitude -= shiftAmount;
         item.longitude += shiftAmount;
       } else {
         // Otherwise, mark this coordinate as shifted
@@ -58,7 +58,7 @@ const MapPage: React.FC = () => {
       <AppSidebar />
       <div className='w-full h-screen flex flex-col'>
         <Navbar setMapCenter={setCenter} setMapZoom={setZoom} />
-        <MapWithPins center={center} zoom={zoom} pinData={pinData} />
+        <MapWithPins center={center} zoom={zoom} pinData={pinData} showAllPopup={true} />
       </div>
     </SidebarProvider>
   );

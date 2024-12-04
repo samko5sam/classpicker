@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { preDefinedLocations } from "@/constants/Locations";
 import { Link, useLocation, useNavigation } from "react-router-dom";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 type Props = {
   setMapCenter?: React.Dispatch<React.SetStateAction<number[]>>;
@@ -21,6 +22,7 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
   const location = useLocation()
   const [isNavbarHidden, setIsNavbarHidden] = useState(hideNavbar);
   const {open: sidebarOpen} = useSidebar()
+  const { user } = useGlobalContext();
 
   const isMapPath = /^\/map\/?$/.test(location.pathname);
   const isClassTablePath = /^\/classtable\/?$/.test(location.pathname);
@@ -92,7 +94,11 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
           </div>
         )}
         <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
-          <UserCircle2 />
+          {user.id ? <img
+              src={user.picture?.data.url}//"https://via.placeholder.com/150"
+              alt="User Avatar"
+              className="w-8 h-8 rounded-full mr-4"
+            /> : <UserCircle2 />}
         </Link>
       </div>
     </nav>

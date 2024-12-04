@@ -122,6 +122,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (storedSelectedClasses) {
       setSelectedClasses(JSON.parse(storedSelectedClasses));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Rest of the GlobalProvider component...
