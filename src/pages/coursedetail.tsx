@@ -4,6 +4,7 @@ import FacebookComments from '@/components/FacebookComments';
 import Navbar from '@/components/ui/Navbar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Semester } from '@/constants/Metadata';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 const CourseDetails: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const pageUrl = `https://samko5sam.github.io${window.location.pathname}#${location.pathname}${location.search}`;
+  const pageUrl = `https://samko5sam.github.io${window.location.pathname}#${location.pathname}${location.search}&semester=${Semester}`;
   const [searchParams] = useSearchParams();
   const courseId = searchParams.get("id");
   const { classData } = useGlobalContext();

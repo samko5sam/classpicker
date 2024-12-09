@@ -4,6 +4,7 @@ import { FacebookLoginClient, LoginResponse, ProfileSuccessResponse } from '@gre
 import { fbAppId } from '@/constants/openKey';
 import { useToast } from '@/hooks/use-toast';
 import { Course } from '@/components/ClassList';
+import { Semester } from '@/constants/Metadata';
 
 interface GlobalContextType {
   isAuthenticated: boolean;
@@ -108,12 +109,12 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     loadFB()
     const getData = async () => {
-      const res1131 = await fetch("./data/1131-class-all.json");
-      const data1131 = await res1131.json();
-      setClassData(data1131);
-      setShowedData(data1131);
+      const res = await fetch(`./data/${Semester}-class-all.json`);
+      const data = await res.json();
+      setClassData(data);
+      setShowedData(data);
       setLoading(false);
-      return data1131
+      return data
     }
 
     getData();

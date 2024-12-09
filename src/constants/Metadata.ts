@@ -1,0 +1,1 @@
+export const Semester = '1131';
