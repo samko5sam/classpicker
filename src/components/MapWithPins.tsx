@@ -12,10 +12,11 @@ export type Pin = {
   中文課程名稱?: string;
 };
 
-const MapWithPins = ({ center, zoom, pinData }: {
+const MapWithPins = ({ center, zoom, pinData, showAllPopup }: {
   center?: number[];
   zoom?: number;
   pinData?: Pin[];
+  showAllPopup?: boolean;
 }) => {
   const mapRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,7 @@ const MapWithPins = ({ center, zoom, pinData }: {
     zoom: zoom || 16,
   });
 
-  console.log(pinData)
+  // console.log(pinData)
 
   const stopMapMovement = () => {
     if (mapRef.current) {
@@ -75,7 +76,13 @@ const MapWithPins = ({ center, zoom, pinData }: {
         {/* Render markers based on pinData */}
         {pinData && pinData.map((pin, index) => (
           <Marker onClick={() => handleMarkerClick(pin)} key={index} latitude={pin.latitude} longitude={pin.longitude}>
-            {pin.type !== "area" && <div style={{ backgroundColor: "red", width: "20px", height: "20px", borderRadius: "50%", borderWidth: "1px", borderColor: "black" }} />}
+            {pin.type !== "area" && <>
+              <div className="flex flex-col items-center">
+                {showAllPopup && (pin.中文課程名稱 && <p className="text-base">{pin.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</p>)}
+                <div style={{ backgroundColor: "red", width: "20px", height: "20px", borderRadius: "50%", borderWidth: "1px", borderColor: "black" }} />
+                {showAllPopup && (pin.中文課程名稱 && <p className="text-base opacity-0">{pin.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</p>)}
+              </div>
+            </>}
             {pin.type === "area" && <div style={{ color: "black", backgroundColor: "white", padding: "2px", borderRadius: "3px", borderWidth: "1px", borderColor: "black" }}>
               <strong>{pin.title}</strong>
               <p>{pin.description}</p>

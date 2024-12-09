@@ -4,13 +4,13 @@ import PaginationItems from './PaginationItems';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useGlobalContext } from '@/context/GlobalContext';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 
 interface ClassTableProps {
   courses: Course[];
-  currentPage: number;
-  itemsPerPage: number;
-  totalPages: number;
-  handlePageChange: (pageNumber: number) => void;
+  currentPage?: number;
+  totalPages?: number;
+  handlePageChange?: (pageNumber: number) => void;
   enableAddClasses?: boolean;
 }
 
@@ -21,8 +21,9 @@ export const ClassTable: React.FC<ClassTableProps> = ({
   handlePageChange,
   enableAddClasses
 }) => {
+  const navigate = useNavigate();
   const { selectedClasses, setSelectedClasses } = useGlobalContext();
-  const [actionClasses, setActionClasses] = useState([]);
+  const [actionClasses, setActionClasses] = useState<Course[]>([]);
 
   const handleCourseSelect = (course: Course) => {
     if (actionClasses.includes(course)) {
@@ -33,17 +34,28 @@ export const ClassTable: React.FC<ClassTableProps> = ({
   };
 
   const handleAddSelectedCourses = () => {
-    // Perform action with selected courses, e.g. add to class table
     console.log('Adding selected courses:', actionClasses);
 
     // Persist selected courses to localStorage
     localStorage.setItem('selectedCourses', JSON.stringify([...selectedClasses, ...actionClasses]));
-    setSelectedClasses([...selectedClasses, ...actionClasses])
+    setSelectedClasses([...selectedClasses, ...actionClasses]);
+  };
+
+  const handleDeleteSelectedCourses = () => {
+    console.log('Deleting selected courses:', actionClasses);
+
+    // Remove selected courses from global context
+    const updatedSelectedClasses = selectedClasses.filter((c) => !actionClasses.includes(c));
+    localStorage.setItem('selectedCourses', JSON.stringify(updatedSelectedClasses));
+    setSelectedClasses(updatedSelectedClasses);
+
+    // Clear current selection
+    setActionClasses([]);
   };
 
   useEffect(() => {
     setActionClasses([]);
-  }, [currentPage, courses])
+  }, [currentPage, courses]);
 
   return (
     <>
@@ -81,7 +93,16 @@ export const ClassTable: React.FC<ClassTableProps> = ({
                   onChange={() => handleCourseSelect(course)}
                 />
               </TableCell>
-              <TableCell>{course.開課序號}</TableCell>
+              <TableCell>
+                <span className='underline cursor-pointer' onClick={() => navigate({
+                  pathname: "/coursedetail",
+                  search: createSearchParams({
+                    id: course.開課序號.toString()
+                  }).toString()
+                })}>
+                  {course.開課序號}
+                </span>
+              </TableCell>
               <TableCell>
                 <span className='text-base'>{course.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</span><br />
                 <span className='text-xs text-gray-400'>{course.英文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</span>
@@ -95,22 +116,33 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         </TableBody>
       </Table>
 
-      {enableAddClasses && (
-        <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-4 space-x-4">
+        {enableAddClasses ? (
           <Button
             onClick={handleAddSelectedCourses}
             disabled={actionClasses.length === 0}
           >
             加入課表
           </Button>
-        </div>
-      )}
+        ) : (
+          <Button
+            onClick={handleDeleteSelectedCourses}
+            disabled={actionClasses.length === 0}
+            className="bg-red-500 hover:bg-red-600"
+          >
+            刪除課程
+          </Button>
+        )}
+      </div>
 
-      {totalPages > 1 && <PaginationItems
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />}
+
+      {totalPages > 1 && (
+        <PaginationItems
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };
