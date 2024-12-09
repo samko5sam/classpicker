@@ -56,7 +56,7 @@ const ClasstablePage: FC = () => {
     })
     // Convert the string values to integers
     const start = parseInt(arr[0], 10);
-    const end = parseInt(arr[1], 10);
+    const end = parseInt(arr[1]||arr[0], 10);
 
     // Generate and return the range of numbers from start to end (inclusive)
     const result = [];
@@ -83,7 +83,7 @@ const ClasstablePage: FC = () => {
 
     const schedule: { day: string; periods: string[]; place: string; }[] = [];
     if (!timeString) return [];
-    const parts = timeString.split(',');
+    const parts = timeString.split(', ');
     parts.forEach(part => {
       if (part.match(/[一二三四五六]/)) {
         const day = days[part[0]];
