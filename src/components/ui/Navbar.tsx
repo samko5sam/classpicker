@@ -93,14 +93,15 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
             </Button>
           </div>
         )}
-        <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
-          {user.id ? <img
-              src={user.picture?.data.url}//"https://via.placeholder.com/150"
-              alt="User Avatar"
-              className="w-8 h-8 rounded-full mr-4"
-            /> : <UserCircle2 />}
-        </Link>
       </div>
+
+      <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
+        {user.id ? <img
+            src={user.picture?.data.url}//"https://via.placeholder.com/150"
+            alt="User Avatar"
+            className="w-8 h-8 rounded-full ml-4"
+          /> : <UserCircle2 width={32} height={32} />}
+      </Link>
     </nav>
   );
 };
