@@ -134,7 +134,7 @@ const ClasstablePage: FC = () => {
   useEffect(() => {
     populateSchedule();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedClasses, selectedTag]);
+  }, [selectedClasses, selectedTag, courseTags]);
 
   return (
     <SidebarProvider className="w-full flex-1 h-screen">

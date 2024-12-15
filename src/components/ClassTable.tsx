@@ -23,7 +23,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
   enableAddClasses
 }) => {
   const navigate = useNavigate();
-  const { selectedClasses, setSelectedClasses, courseTags, setCourseTags } = useGlobalContext();
+  const { selectedClasses, setSelectedClasses, courseTags, setCourseTags, setSelectedTag } = useGlobalContext();
   const [actionClasses, setActionClasses] = useState<Course[]>([]);
   const [tagInput, setTagInput] = useState('');
 
@@ -87,6 +87,15 @@ export const ClassTable: React.FC<ClassTableProps> = ({
       }
       setCourseTags(newTags);
       localStorage.setItem('courseTags', JSON.stringify(newTags));
+    }
+    if ([...new Set(
+      Object.keys(newTags).flatMap((courseId) =>
+        newTags[courseId]
+      )
+    )].includes(tagToRemove)){
+      console.log("Still have classes in this tag");
+    } else {
+      setSelectedTag(null);
     }
   };
 
