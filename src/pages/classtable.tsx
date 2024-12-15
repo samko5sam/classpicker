@@ -15,6 +15,9 @@ import { ClassList } from "@/components/ClassList";
 import { ClassTable } from "@/components/ClassTable";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { ToggleSettings } from "@/components/ToggleSettings";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { MessageCircleWarning } from "lucide-react";
 
 type ScheduleData = {
   title: string;
@@ -42,6 +45,7 @@ const ClasstablePage: FC = () => {
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
   const [showPeriodsTime, setShowPeriodsTime] = useState(false);
   const [showPlace, setShowPlace] = useState(true);
+  const [scheduleConflict, setScheduleConflict] = useState(false);
 
   const periodsTransformObj = {
     'A': '11',
@@ -99,6 +103,8 @@ const ClasstablePage: FC = () => {
   const populateSchedule = () => {
     const newClassData = [...classPeriods];
 
+    setScheduleConflict(false);
+
     if (!selectedClasses) return;
     selectedClasses.forEach(course => {
       const schedule = parseTimeAndPlace(course.地點時間);
@@ -106,6 +112,7 @@ const ClasstablePage: FC = () => {
         periods.forEach(period => {
           const periodIndex = newClassData.findIndex(item => item.id === period);
           if (periodIndex !== -1) {
+            if (newClassData[periodIndex][day] !== undefined) setScheduleConflict(true);
             newClassData[periodIndex] = {
               ...newClassData[periodIndex],
               [day]: {
@@ -134,6 +141,16 @@ const ClasstablePage: FC = () => {
         <div>
           <ClassList />
 
+          <div className="my-8">
+            <Alert>
+              <InfoCircledIcon className="h-4 w-4" />
+              <AlertTitle>請注意</AlertTitle>
+              <AlertDescription className="text-gray-500">
+                網站中的資料可能會因時間而失效，並且我們不保證其正確性。課程相關資訊請以學校提供的資料為準。
+              </AlertDescription>
+            </Alert>
+          </div>
+
           <h2>已選擇的課程</h2>
           <ClassTable
             courses={selectedClasses}
@@ -141,6 +158,15 @@ const ClasstablePage: FC = () => {
           />
           <div className="max-w-[768px] mx-auto mt-4">
             <h1 className="text-2xl font-semibold">課表 {id}</h1>
+            {scheduleConflict && (
+              <Alert variant="destructive" className="my-4">
+                <MessageCircleWarning className="h-4 w-4" />
+                <AlertTitle>發生衝堂</AlertTitle>
+                <AlertDescription>
+                  有課程時間有衝突，請確認您選擇的課程安排是否正確。
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="mb-2">
               <ToggleSettings setShowPeriodsTime={setShowPeriodsTime} setShowPlace={setShowPlace} />
             </div>
