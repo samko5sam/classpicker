@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Table,
@@ -18,6 +18,8 @@ import { ToggleSettings } from "@/components/ToggleSettings";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { MessageCircleWarning } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useReactToPrint } from "react-to-print";
 
 type ScheduleData = {
   title: string;
@@ -43,6 +45,11 @@ const ClasstablePage: FC = () => {
   const selectedFilteredClasses = selectedClasses.filter(course =>
     selectedTag ? courseTags[course.開課序號.toString()]?.includes(selectedTag) : true
   )
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({
+    contentRef: contentRef,
+    documentTitle: selectedTag ? ("classtable_" + selectedTag) : "classtable_all"
+  });
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
@@ -136,10 +143,16 @@ const ClasstablePage: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClasses, selectedTag, courseTags]);
 
+  // Add print function
+  const handlePrint = () => {
+    // window.print();
+    reactToPrintFn();
+  };
+
   return (
-    <SidebarProvider className="w-full flex-1 h-screen">
+    <SidebarProvider className="w-full flex-1 h-screen print:h-auto">
       <AppSidebar />
-      <div className="container mx-auto py-8 flex-1 pt-[72px]">
+      <div className="container mx-auto py-8 flex-1 pt-[72px] print:p-0">
         <Navbar />
         <div>
           <ClassList />
@@ -159,66 +172,20 @@ const ClasstablePage: FC = () => {
             courses={selectedClasses}
             totalPages={1}
           />
-          <div className="max-w-[768px] mx-auto mt-4">
-            <h1 className="text-2xl font-semibold">課表 {id}</h1>
 
-            {/* Tag */}
-            <h2 className="mt-4">選擇標籤</h2>
-            <select
-              value={selectedTag || 'all'}
-              onChange={(e) => setSelectedTag(e.target.value === 'all' ? null : e.target.value)}
-              className="px-4 py-2 border rounded my-2"
-            >
-              <option value="all">顯示全部</option>
-              {[...new Set(
-                Object.keys(courseTags).flatMap((courseId) =>
-                  courseTags[courseId]
-                )
-              )].map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
-
-            {scheduleConflict && (
-              <Alert variant="destructive" className="my-4">
-                <MessageCircleWarning className="h-4 w-4" />
-                <AlertTitle>發生衝堂</AlertTitle>
-                <AlertDescription>
-                  有課程時間有衝突，請確認您選擇的課程安排是否正確。
-                </AlertDescription>
-              </Alert>
-            )}
-            <div className="mb-2">
-              <ToggleSettings setShowPeriodsTime={setShowPeriodsTime} setShowPlace={setShowPlace} />
-            </div>
-            <Table className="table-fixed rounded-lg border-collapse border border-gray-200">
-              <TableHeader>
-                <TableRow>
-                  <TableCell>節次</TableCell>
-                  <TableCell className="border-l border-gray-200">星期一</TableCell>
-                  <TableCell className="border-l border-gray-200">星期二</TableCell>
-                  <TableCell className="border-l border-gray-200">星期三</TableCell>
-                  <TableCell className="border-l border-gray-200">星期四</TableCell>
-                  <TableCell className="border-l border-gray-200">星期五</TableCell>
-                  <TableCell className="border-l border-gray-200">星期六</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {classData.map((classItem) => (
-                  <TableRow key={classItem.id} className="text-center h-16">
-                    <TableCell>{classItem.id} {showPeriodsTime && <><br/><span className="text-xs text-gray-500">{classItem.timeStartMain} - {classItem.timeEndMain}</span></>}</TableCell>
-                    <ClassTableCell showPlace={showPlace} data={classItem.mon} />
-                    <ClassTableCell showPlace={showPlace} data={classItem.tue} />
-                    <ClassTableCell showPlace={showPlace} data={classItem.wed} />
-                    <ClassTableCell showPlace={showPlace} data={classItem.thu} />
-                    <ClassTableCell showPlace={showPlace} data={classItem.fri} />
-                    <ClassTableCell showPlace={showPlace} data={classItem.sat} />
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <div ref={contentRef} className="max-w-[768px] mx-auto mt-4 print:h-auto" id="classtable">
+            <TheClassTable
+              selectedTag={selectedTag}
+              scheduleConflict={scheduleConflict}
+              handlePrint={handlePrint}
+              setSelectedTag={setSelectedTag}
+              courseTags={courseTags}
+              showPeriodsTime={showPeriodsTime}
+              setShowPeriodsTime={setShowPeriodsTime}
+              showPlace={showPlace}
+              setShowPlace={setShowPlace}
+              classData={classData}
+            />
           </div>
         </div>
       </div>
@@ -226,9 +193,91 @@ const ClasstablePage: FC = () => {
   );
 };
 
+const TheClassTable = ({
+  selectedTag,
+  scheduleConflict,
+  handlePrint,
+  setSelectedTag,
+  courseTags,
+  showPeriodsTime,
+  setShowPeriodsTime,
+  showPlace,
+  setShowPlace,
+  classData
+}) => {
+  return (
+    <>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">課表 {selectedTag}</h1>
+        <Button disabled={scheduleConflict} onClick={handlePrint} className="print:hidden">列印課表</Button>
+      </div>
+
+      {/* Tag */}
+      <div id="tagSelect" className="print:hidden">
+        <h2 className="mt-4">選擇標籤</h2>
+        <select
+          value={selectedTag || 'all'}
+          onChange={(e) => setSelectedTag(e.target.value === 'all' ? null : e.target.value)}
+          className="px-4 py-2 border rounded my-2"
+        >
+          <option value="all">顯示全部</option>
+          {[...new Set(
+            Object.keys(courseTags).flatMap((courseId) =>
+              courseTags[courseId]
+            )
+          )].map((tag) => (
+            <option key={tag} value={tag}>
+              {tag}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {scheduleConflict && (
+        <Alert variant="destructive" className="my-4">
+          <MessageCircleWarning className="h-4 w-4" />
+          <AlertTitle>發生衝堂</AlertTitle>
+          <AlertDescription>
+            有課程時間有衝突，請確認您選擇的課程安排是否正確。
+          </AlertDescription>
+        </Alert>
+      )}
+      <div className="mb-2 print:hidden">
+        <ToggleSettings setShowPeriodsTime={setShowPeriodsTime} setShowPlace={setShowPlace} />
+      </div>
+      <Table className="table-fixed rounded-lg border-collapse border border-gray-200">
+        <TableHeader>
+          <TableRow>
+            <TableCell className="print:p-1">節次</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期一</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期二</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期三</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期四</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期五</TableCell>
+            <TableCell className="border-l border-gray-200 print:p-1">星期六</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {classData.map((classItem) => (
+            <TableRow key={classItem.id} className="text-center h-16 print:h-12">
+              <TableCell className="print:p-1">{classItem.id} {showPeriodsTime && <><br/><span className="text-xs text-gray-500">{classItem.timeStartMain} - {classItem.timeEndMain}</span></>}</TableCell>
+              <ClassTableCell showPlace={showPlace} data={classItem.mon} />
+              <ClassTableCell showPlace={showPlace} data={classItem.tue} />
+              <ClassTableCell showPlace={showPlace} data={classItem.wed} />
+              <ClassTableCell showPlace={showPlace} data={classItem.thu} />
+              <ClassTableCell showPlace={showPlace} data={classItem.fri} />
+              <ClassTableCell showPlace={showPlace} data={classItem.sat} />
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
+  )
+}
+
 const ClassTableCell = ({data, showPlace}) => {
   return (
-    <TableCell className="border-l border-gray-200">
+    <TableCell className="border-l border-gray-200 print:p-1">
       {data?.title.replace(/(?:\[.*?\]|\(.*?\))/g, '')}
       {showPlace && <>
         <br />
