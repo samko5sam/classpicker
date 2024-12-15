@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
+import { DownloadIcon } from 'lucide-react';
 
 interface ClassTableProps {
   courses: Course[];
@@ -103,6 +104,31 @@ export const ClassTable: React.FC<ClassTableProps> = ({
     setActionClasses([]);
   }, [currentPage, courses]);
 
+  const downloadCSV = () => {
+    const csvData = [
+      ['開課序號', '課程名稱', '系所', '學分', '教師', '時間地點'],
+      ...courses.map(course => [
+        course.開課序號,
+        course.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, ''),
+        course.系所,
+        course.學分,
+        course.教師,
+        course.地點時間
+      ])
+    ];
+
+    const csvContent = csvData.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    const currentTime = new Date().toISOString().replace(/[\W_]+/g, '');
+    link.setAttribute('download', `courses_${currentTime}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <Table className="w-full border rounded">
@@ -185,13 +211,16 @@ export const ClassTable: React.FC<ClassTableProps> = ({
             disabled={actionClasses.length === 0}
           >
             加入課表
-          </Button>
+        </Button>
         ) : (
           <>
             <div className="flex space-x-2">
+              <Button onClick={downloadCSV} variant='outline'>
+                <DownloadIcon /> CSV
+              </Button>
               <Input
                 type="text"
-                placeholder="輸入標籤"
+                placeholder="輸入標籤名稱"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 className="w-32"
