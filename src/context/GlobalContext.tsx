@@ -15,6 +15,10 @@ interface GlobalContextType {
   setShowedData: (data: any[]) => void;
   selectedClasses: Course[];
   setSelectedClasses: (classes: Course[]) => void;
+  selectedTag: string | null;
+  setSelectedTag: (tag: string | null) => void;
+  courseTags: Record<string, string[]>;
+  setCourseTags: (tags: Record<string, string[]>) => void;
   logoutAccount?: () => void;
   loginAccount?: () => void;
   loading: boolean;
@@ -42,6 +46,10 @@ const GlobalContext = createContext<GlobalContextType>({
   setShowedData: () => {},
   selectedClasses: [],
   setSelectedClasses: () => {},
+  selectedTag: null,
+  setSelectedTag: () => {},
+  courseTags: {},
+  setCourseTags: () => {},
   loading: false,
   setLoading: () => {}
 });
@@ -56,6 +64,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [classData, setClassData] = useState([]);
   const [showedData, setShowedData] = useState([]);
   const [selectedClasses, setSelectedClasses] = useState<Course[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [courseTags, setCourseTags] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
 
   const getFbProfile = () => {
@@ -123,10 +133,13 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (storedSelectedClasses) {
       setSelectedClasses(JSON.parse(storedSelectedClasses));
     }
+    // Load course tags from localStorage
+    const storedCourseTags = localStorage.getItem('courseTags');
+    if (storedCourseTags) {
+      setCourseTags(JSON.parse(storedCourseTags));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Rest of the GlobalProvider component...
 
   const value = {
     isAuthenticated,
@@ -137,6 +150,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setShowedData,
     selectedClasses,
     setSelectedClasses,
+    selectedTag,
+    setSelectedTag,
+    courseTags,
+    setCourseTags,
     logoutAccount,
     loginAccount,
     loading,

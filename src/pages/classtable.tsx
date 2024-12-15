@@ -39,7 +39,10 @@ type ScheduleItem = {
 };
 
 const ClasstablePage: FC = () => {
-  const { selectedClasses } = useGlobalContext();
+  const { selectedClasses, selectedTag, setSelectedTag, courseTags } = useGlobalContext();
+  const selectedFilteredClasses = selectedClasses.filter(course =>
+    selectedTag ? courseTags[course.開課序號.toString()]?.includes(selectedTag) : true
+  )
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
@@ -106,7 +109,7 @@ const ClasstablePage: FC = () => {
     setScheduleConflict(false);
 
     if (!selectedClasses) return;
-    selectedClasses.forEach(course => {
+    selectedFilteredClasses.forEach(course => {
       const schedule = parseTimeAndPlace(course.地點時間);
       schedule.forEach(({ day, periods, place }) => {
         periods.forEach(period => {
@@ -131,7 +134,7 @@ const ClasstablePage: FC = () => {
   useEffect(() => {
     populateSchedule();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedClasses]);
+  }, [selectedClasses, selectedTag]);
 
   return (
     <SidebarProvider className="w-full flex-1 h-screen">
@@ -158,6 +161,26 @@ const ClasstablePage: FC = () => {
           />
           <div className="max-w-[768px] mx-auto mt-4">
             <h1 className="text-2xl font-semibold">課表 {id}</h1>
+
+            {/* Tag */}
+            <h2 className="mt-4">選擇標籤</h2>
+            <select
+              value={selectedTag || 'all'}
+              onChange={(e) => setSelectedTag(e.target.value === 'all' ? null : e.target.value)}
+              className="px-4 py-2 border rounded my-2"
+            >
+              <option value="all">顯示全部</option>
+              {[...new Set(
+                Object.keys(courseTags).flatMap((courseId) =>
+                  courseTags[courseId]
+                )
+              )].map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+
             {scheduleConflict && (
               <Alert variant="destructive" className="my-4">
                 <MessageCircleWarning className="h-4 w-4" />
