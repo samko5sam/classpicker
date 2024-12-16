@@ -52,6 +52,26 @@ export const ClassTable: React.FC<ClassTableProps> = ({
     localStorage.setItem('selectedCourses', JSON.stringify(updatedSelectedClasses));
     setSelectedClasses(updatedSelectedClasses);
 
+    const newTags = { ...courseTags };
+    const relatedTags = [];
+    actionClasses.forEach((courseIdToDelete) => {
+      if (Object.keys(newTags).includes(courseIdToDelete.開課序號.toString())){
+        const indexToRemove = courseIdToDelete.開課序號.toString();
+        newTags[indexToRemove].forEach((tag) => {
+          if (!relatedTags.includes(tag)){
+            relatedTags.push(tag);
+          }
+        })
+        delete newTags[indexToRemove];
+      }
+    })
+    localStorage.setItem('courseTags', JSON.stringify(newTags));
+    setCourseTags(newTags);
+
+    relatedTags.forEach((tag) => {
+      updateTagSelectorIfNeeded(newTags, tag);
+    })
+
     // Clear current selection
     setActionClasses([]);
   };
@@ -89,6 +109,10 @@ export const ClassTable: React.FC<ClassTableProps> = ({
       setCourseTags(newTags);
       localStorage.setItem('courseTags', JSON.stringify(newTags));
     }
+    updateTagSelectorIfNeeded(newTags, tagToRemove);
+  };
+
+  const updateTagSelectorIfNeeded = (newTags, tagToRemove) => {
     if ([...new Set(
       Object.keys(newTags).flatMap((courseId) =>
         newTags[courseId]
@@ -98,7 +122,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
     } else {
       setSelectedTag(null);
     }
-  };
+  }
 
   useEffect(() => {
     setActionClasses([]);
@@ -157,6 +181,13 @@ export const ClassTable: React.FC<ClassTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
+          {courses.length === 0 && (
+            <TableRow>
+              <div className='p-4'>
+                還沒有選擇的課程
+              </div>
+            </TableRow>
+          )}
           {courses.map((course) => (
             <TableRow key={course.開課序號}>
               <TableCell>
@@ -204,48 +235,52 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         </TableBody>
       </Table>
 
-      <div className="flex justify-end mt-4 space-x-4">
-        {enableAddClasses ? (
-          <Button
-            onClick={handleAddSelectedCourses}
-            disabled={actionClasses.length === 0}
-          >
-            加入課表
-        </Button>
-        ) : (
-          <>
-            <div className="flex space-x-2">
-              <Button onClick={downloadCSV} variant='outline'>
-                <DownloadIcon /> CSV
-              </Button>
-              <Input
-                type="text"
-                placeholder="輸入標籤名稱"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                className="w-32"
-                onKeyDown={(e) => {
-                  if (e.key.toLocaleLowerCase() === 'enter' && tagInput.trim() && actionClasses.length > 0) {
-                    handleAddTag();
-                  }
-                }}
-              />
-              <Button
-                onClick={handleAddTag}
-                disabled={actionClasses.length === 0 || !tagInput.trim()}
-              >
-                新增標籤
-              </Button>
-              <Button
-                onClick={handleDeleteSelectedCourses}
-                disabled={actionClasses.length === 0}
-                className="bg-red-500 hover:bg-red-600"
-              >
-                刪除課程
-              </Button>
-            </div>
-          </>
-        )}
+      <div className="flex mt-4 space-x-4">
+        <div className='flex-1'>
+          <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
+            <DownloadIcon /> CSV
+          </Button>
+        </div>
+        <div>
+          {enableAddClasses ? (
+            <Button
+              onClick={handleAddSelectedCourses}
+              disabled={actionClasses.length === 0}
+            >
+              加入課表
+          </Button>
+          ) : (
+            <>
+              <div className="flex space-x-2">
+                <Input
+                  type="text"
+                  placeholder="輸入標籤名稱"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  className="w-32"
+                  onKeyDown={(e) => {
+                    if (e.key.toLocaleLowerCase() === 'enter' && tagInput.trim() && actionClasses.length > 0) {
+                      handleAddTag();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={handleAddTag}
+                  disabled={actionClasses.length === 0 || !tagInput.trim()}
+                >
+                  新增標籤
+                </Button>
+                <Button
+                  onClick={handleDeleteSelectedCourses}
+                  disabled={actionClasses.length === 0}
+                  className="bg-red-500 hover:bg-red-600"
+                >
+                  刪除課程
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {totalPages > 1 && (

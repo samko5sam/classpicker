@@ -17,9 +17,12 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { ToggleSettings } from "@/components/ToggleSettings";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { MessageCircleWarning } from "lucide-react";
+import { Download, MessageCircleWarning } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReactToPrint } from "react-to-print";
+
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 type ScheduleData = {
   title: string;
@@ -146,7 +149,28 @@ const ClasstablePage: FC = () => {
   // Add print function
   const handlePrint = () => {
     // window.print();
-    reactToPrintFn();
+    // reactToPrintFn();
+    generatePDF();
+  };
+
+  const generatePDF = async () => {
+    const input = document.getElementById("classtable"); 
+    if (!input) return;
+
+    const canvas = await html2canvas(input, {
+      scale: 1.5,
+      ignoreElements: function(element) {
+        return element.classList.contains('print:hidden');
+      }
+    });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; 
+
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.save(`${selectedTag ? ("classtable_" + selectedTag) : "classtable_all"}.pdf`); 
   };
 
   return (
@@ -173,7 +197,7 @@ const ClasstablePage: FC = () => {
             totalPages={1}
           />
 
-          <div ref={contentRef} className="max-w-[768px] mx-auto mt-4 print:h-auto" id="classtable">
+          <div ref={contentRef} className="max-w-[768px] mx-auto mt-8 print:h-auto" id="classtable">
             <TheClassTable
               selectedTag={selectedTag}
               scheduleConflict={scheduleConflict}
@@ -209,7 +233,7 @@ const TheClassTable = ({
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">課表 {selectedTag}</h1>
-        <Button disabled={scheduleConflict} onClick={handlePrint} className="print:hidden">列印課表</Button>
+        <Button variant="outline" disabled={scheduleConflict} onClick={handlePrint} className="print:hidden"><Download /> 課表PDF</Button>
       </div>
 
       {/* Tag */}
