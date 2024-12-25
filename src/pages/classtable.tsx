@@ -57,6 +57,7 @@ const ClasstablePage: FC = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
+  const [totalCredits, setTotalCredits] = useState(0);
   const [showPeriodsTime, setShowPeriodsTime] = useState(false);
   const [showPlace, setShowPlace] = useState(true);
   const [scheduleConflict, setScheduleConflict] = useState(false);
@@ -116,11 +117,13 @@ const ClasstablePage: FC = () => {
 
   const populateSchedule = () => {
     const newClassData = [...classPeriods];
+    let totalCredits = 0;
 
     setScheduleConflict(false);
 
     if (!selectedClasses) return;
     selectedFilteredClasses.forEach(course => {
+      totalCredits += course.學分;
       const schedule = parseTimeAndPlace(course.地點時間);
       schedule.forEach(({ day, periods, place }) => {
         periods.forEach(period => {
@@ -140,6 +143,7 @@ const ClasstablePage: FC = () => {
     });
 
     setClassData(newClassData);
+    setTotalCredits(totalCredits);
   };
 
   useEffect(() => {
@@ -215,6 +219,7 @@ const ClasstablePage: FC = () => {
               showPlace={showPlace}
               setShowPlace={setShowPlace}
               classData={classData}
+              totalCredits={totalCredits}
             />
           </div>
         </div>
@@ -233,7 +238,8 @@ const TheClassTable = ({
   setShowPeriodsTime,
   showPlace,
   setShowPlace,
-  classData
+  classData,
+  totalCredits
 }) => {
   return (
     <>
@@ -241,6 +247,8 @@ const TheClassTable = ({
         <h1 className="text-2xl font-semibold">課表 {selectedTag}</h1>
         <Button variant="outline" disabled={scheduleConflict} onClick={handlePrint} className="print:hidden"><Download /> 課表PDF</Button>
       </div>
+
+      <p>{totalCredits ? totalCredits + "學分" : null}</p>
 
       {/* Tag */}
       <div id="tagSelect" className="print:hidden">
