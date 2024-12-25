@@ -4,9 +4,23 @@ import { Button } from '@/components/ui/button';
 import { FilterIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { listorder } from '@/constants/listorder';
+import { useEffect } from 'react';
 
 // Search bar component
 export const SearchBar = ({ searchTerm, setSearchTerm }) => {
+  // Retrieve last saved search term from session storage
+  useEffect(() => {
+    const savedSearchTerm = sessionStorage.getItem('searchTerm');
+    if (savedSearchTerm) {
+      setSearchTerm(savedSearchTerm);
+    }
+  }, [setSearchTerm]);
+
+  // Save search term to session storage on update
+  useEffect(() => {
+    sessionStorage.setItem('searchTerm', searchTerm);
+  }, [searchTerm]);
+
   return (
     <Input
       placeholder="搜尋課程名稱..."
@@ -28,6 +42,19 @@ export const FilterDropdown = ({
   setShowDropdown,
   departmentOptionsWithAll,
 }) => {
+  // Retrieve last saved filter department from session storage
+  useEffect(() => {
+    const savedFilterDepartment = sessionStorage.getItem('filterDepartment');
+    if (savedFilterDepartment) {
+      setFilterDepartment(savedFilterDepartment);
+    }
+  }, [setFilterDepartment]);
+
+  // Save filter department to session storage on update
+  useEffect(() => {
+    sessionStorage.setItem('filterDepartment', filterDepartment);
+  }, [filterDepartment]);
+
   return (
     <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
       <DropdownMenuTrigger asChild>
