@@ -137,7 +137,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         course.系所,
         course.學分,
         course.教師,
-        course.地點時間
+        `"${course.地點時間}"`
       ])
     ];
 
