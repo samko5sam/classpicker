@@ -96,13 +96,13 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
         )}
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 ml-4">
         <AnnouncementModal />
         <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
           {user.id ? <img
               src={user.picture?.data.url}//"https://via.placeholder.com/150"
               alt="User Avatar"
-              className="w-8 h-8 rounded-full ml-4"
+              className="w-8 h-8 rounded-full"
             /> : <UserCircle2 width={32} height={32} />}
         </Link>
       </div>
