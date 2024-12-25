@@ -11,6 +11,7 @@ import { preDefinedLocations } from "@/constants/Locations";
 import { Link, useLocation, useNavigation } from "react-router-dom";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useGlobalContext } from "@/context/GlobalContext";
+import AnnouncementModal from "../Announcement";
 
 type Props = {
   setMapCenter?: React.Dispatch<React.SetStateAction<number[]>>;
@@ -95,13 +96,16 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
         )}
       </div>
 
-      <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
-        {user.id ? <img
-            src={user.picture?.data.url}//"https://via.placeholder.com/150"
-            alt="User Avatar"
-            className="w-8 h-8 rounded-full ml-4"
-          /> : <UserCircle2 width={32} height={32} />}
-      </Link>
+      <div className="flex items-center space-x-4">
+        <AnnouncementModal />
+        <Link to="/user" className="text-gray-600 hover:text-gray-800 focus:outline-none">
+          {user.id ? <img
+              src={user.picture?.data.url}//"https://via.placeholder.com/150"
+              alt="User Avatar"
+              className="w-8 h-8 rounded-full ml-4"
+            /> : <UserCircle2 width={32} height={32} />}
+        </Link>
+      </div>
     </nav>
   );
 };
