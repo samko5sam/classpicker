@@ -23,6 +23,7 @@ import { useReactToPrint } from "react-to-print";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { SemesterDescription } from "@/constants/Metadata";
 
 type ScheduleData = {
   title: string;
@@ -166,10 +167,14 @@ const ClasstablePage: FC = () => {
     const imgData = canvas.toDataURL("image/png");
 
     const pdf = new jsPDF("p", "mm", "a4");
-    const imgWidth = 210;
+    const margin = 10; // Define a margin
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    
+    const imgWidth = pageWidth - 2 * margin; // Subtract margins from page width
     const imgHeight = (canvas.height * imgWidth) / canvas.width; 
 
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.addImage(imgData, "PNG", margin, (pageHeight - imgHeight) / 2, imgWidth, imgHeight); // Center the image vertically
     pdf.save(`${selectedTag ? ("classtable_" + selectedTag) : "classtable_all"}.pdf`); 
   };
 
@@ -179,6 +184,7 @@ const ClasstablePage: FC = () => {
       <div className="container mx-auto py-8 flex-1 pt-[72px] print:p-0">
         <Navbar />
         <div>
+          <h1>{SemesterDescription}課程</h1>
           <ClassList />
 
           <div className="my-8">

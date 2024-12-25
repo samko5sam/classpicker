@@ -1,1 +1,4 @@
-export const Semester = '1131';
+export const SemesterYear = '113';
+export const SemesterPart = '2'
+export const Semester = SemesterYear + SemesterPart;
+export const SemesterDescription = "NTNU 113學年度第2學期";

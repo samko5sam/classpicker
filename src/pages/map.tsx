@@ -15,25 +15,30 @@ const MapPage: React.FC = () => {
   // Function to shift duplicate pins
   const shiftDuplicates = (data) => {
     const shiftAmount = 0.000065; // Amount to shift the coordinates
-    const modifiedData = [...data];  // Create a copy of the data to avoid mutating original
-    const shiftedCoordinates = [];  // To track modified coordinates
+  const modifiedData = [...data]; // Create a copy of the data to avoid mutating original
+  const shiftedCoordinates = {}; // To track modified coordinates and their shifts
   
     // Iterate through the array
     for (let i = 0; i < modifiedData.length; i++) {
       const item = modifiedData[i];
-      const lat = item.latitude;
-      const lon = item.longitude;
+    let lat = item.latitude;
+    let lon = item.longitude;
+    const coordKey = `${lat},${lon}`;
   
-      // Check if the coordinates are already shifted
-      if (shiftedCoordinates.some(coord => coord.latitude === lat && coord.longitude === lon)) {
-        // If the coordinate has been seen before, shift it
-        item.latitude -= shiftAmount;
-        item.longitude += shiftAmount;
+    // If coordinate already has been registered, increment its occurrence
+    if (shiftedCoordinates[coordKey]) {
+      shiftedCoordinates[coordKey]++;
       } else {
-        // Otherwise, mark this coordinate as shifted
-        shiftedCoordinates.push({ latitude: lat, longitude: lon });
+      shiftedCoordinates[coordKey] = 1;
       }
+
+    // Shift coordinates if there are more than one occurrence
+    if (shiftedCoordinates[coordKey] > 1) {
+      // lat -= shiftAmount * (shiftedCoordinates[coordKey] - 1);
+      lon += shiftAmount * (shiftedCoordinates[coordKey] - 1);
+      modifiedData[i] = { ...item, latitude: lat, longitude: lon };
     }
+  }
   
     return modifiedData;
   };
