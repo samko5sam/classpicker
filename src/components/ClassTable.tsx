@@ -184,7 +184,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
           {courses.length === 0 && (
             <TableRow>
               <div className='p-4'>
-                還沒有選擇的課程
+                {enableAddClasses ? "找不到課程" : "還沒有選擇的課程"}
               </div>
             </TableRow>
           )}

@@ -4,6 +4,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 import { Loader2 } from 'lucide-react';
 import { FilterDropdown, SearchBar } from './SearchAndFilter';
 import { listorder } from '../constants/listorder';
+import CoursesPerPageSelector from './CoursesPerPageSelector';
 
 export interface Course {
   開課序號: number;
@@ -23,7 +24,7 @@ export const ClassList: React.FC = () => {
   const [departmentSearchTerm, setDepartmentSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState<number>();
 
   // Find Places
   // const coursePlaces = []
@@ -57,8 +58,8 @@ export const ClassList: React.FC = () => {
   }, [searchTerm]);
 
   // Calculate the courses to display based on pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const indexOfLastItem = currentPage * (itemsPerPage || 10);
+  const indexOfFirstItem = indexOfLastItem - (itemsPerPage || 10);
   const filteredCourses = courses.filter(course => {
     const lowerCaseSearchTerm = debouncedSearchTerm.toLowerCase();
     const matchesSearch =
@@ -73,7 +74,7 @@ export const ClassList: React.FC = () => {
   const currentCourses = filteredCourses.slice(indexOfFirstItem, indexOfLastItem);
 
   // Calculate the total number of pages
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCourses.length / (itemsPerPage || 10));
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -95,6 +96,10 @@ export const ClassList: React.FC = () => {
           setShowDropdown={setShowDropdown}
           departmentOptionsWithAll={departmentOptionsWithAll}
         />
+      </div>
+
+      <div className='flex justify-end'>
+        <CoursesPerPageSelector coursesPerPage={itemsPerPage} setCoursesPerPage={setItemsPerPage} />
       </div>
 
       {loading ? (

@@ -1,5 +1,4 @@
 import { FC, useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
 import {
   Table,
   TableHeader,
@@ -17,13 +16,13 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { ToggleSettings } from "@/components/ToggleSettings";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { Download, MessageCircleWarning } from "lucide-react";
+import { ArrowBigDown, ArrowDownCircle, ArrowUpCircle, Download, MessageCircleWarning } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useReactToPrint } from "react-to-print";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { SemesterDescription } from "@/constants/Metadata";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type ScheduleData = {
   title: string;
@@ -50,17 +49,12 @@ const ClasstablePage: FC = () => {
     selectedTag ? courseTags[course.開課序號.toString()]?.includes(selectedTag) : true
   )
   const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({
-    contentRef: contentRef,
-    documentTitle: selectedTag ? ("classtable_" + selectedTag) : "classtable_all"
-  });
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
   const [classData, setClassData] = useState<ScheduleItem[]>(classPeriods);
   const [totalCredits, setTotalCredits] = useState(0);
   const [showPeriodsTime, setShowPeriodsTime] = useState(false);
   const [showPlace, setShowPlace] = useState(true);
   const [scheduleConflict, setScheduleConflict] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(true);
 
   const periodsTransformObj = {
     'A': '11',
@@ -151,10 +145,8 @@ const ClasstablePage: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClasses, selectedTag, courseTags]);
 
-  // Add print function
+  // Print handler function
   const handlePrint = () => {
-    // window.print();
-    // reactToPrintFn();
     generatePDF();
   };
 
@@ -188,15 +180,33 @@ const ClasstablePage: FC = () => {
       <div className="container mx-auto py-8 flex-1 pt-[72px] print:p-0">
         <Navbar />
         <div>
-          <h1>{SemesterDescription}課程</h1>
-          <ClassList />
+          <Collapsible
+            open={searchOpen}
+            onOpenChange={setSearchOpen}
+            className="p-1 rounded-lg border"
+          >
+            <CollapsibleTrigger className="w-full">
+              <Alert className="bg-transparent border-none">
+                {searchOpen ? <ArrowUpCircle className="h-6 w-6" /> : <ArrowDownCircle className="h-6 w-6" />}
+                <AlertTitle>
+                  {SemesterDescription}課程列表
+                </AlertTitle>
+                <AlertDescription className="text-gray-500">
+                  課程相關資訊請以學校提供的資料為準。
+                </AlertDescription>
+              </Alert>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ClassList />
+            </CollapsibleContent>
+          </Collapsible>
 
           <div className="my-8">
             <Alert>
               <InfoCircledIcon className="h-4 w-4" />
               <AlertTitle>請注意</AlertTitle>
               <AlertDescription className="text-gray-500">
-                網站中的資料可能會因時間而失效，並且我們不保證其正確性。課程相關資訊請以學校提供的資料為準。
+                網站中的資料可能會因時間而失效，並且我們不保證其正確性。如先前加入的課程資訊有更新，請刪除後再次加入。
               </AlertDescription>
             </Alert>
           </div>
@@ -207,7 +217,7 @@ const ClasstablePage: FC = () => {
             totalPages={1}
           />
 
-          <div ref={contentRef} className="max-w-[768px] mx-auto mt-8 print:h-auto" id="classtable">
+          <div ref={contentRef} className="max-w-[768px] mx-auto mt-8 mb-24 print:h-auto" id="classtable">
             <TheClassTable
               selectedTag={selectedTag}
               scheduleConflict={scheduleConflict}
