@@ -237,9 +237,11 @@ export const ClassTable: React.FC<ClassTableProps> = ({
 
       <div className="flex mt-4 space-x-4">
         <div className='flex-1'>
-          <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
-            <DownloadIcon /> CSV
-          </Button>
+          {!enableAddClasses && (
+            <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
+              <DownloadIcon /> CSV
+            </Button>
+          )}
         </div>
         <div>
           {enableAddClasses ? (
