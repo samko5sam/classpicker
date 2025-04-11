@@ -28,13 +28,13 @@ interface GlobalContextType {
 const placeholderUser = {
   picture: {
     data: {
-      url: "https://via.placeholder.com/150",
+      url: "https://avatar.iran.liara.run/public",
       height: 50,
       width: "50",
       is_silhouette: false
     }
   },
-  name: "..."
+  name: "尚未登入..."
 }
 
 const GlobalContext = createContext<GlobalContextType>({

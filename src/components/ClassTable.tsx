@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
-import { DownloadIcon } from 'lucide-react';
+import { DownloadIcon, TagsIcon, Trash2 } from 'lucide-react';
+import { AddCustomClassBtn } from './AddCustomClassBtn';
 
 interface ClassTableProps {
   courses: Course[];
@@ -36,12 +37,18 @@ export const ClassTable: React.FC<ClassTableProps> = ({
     }
   };
 
-  const handleAddSelectedCourses = () => {
-    console.log('Adding selected courses:', actionClasses);
+  const handleAddSelectedCourses = ({specificClass}: {specificClass?: Course}) => {
+    if (specificClass){
+      console.log('Adding specific course:', [{...specificClass}]);
+    } else {
+      console.log('Adding selected courses:', actionClasses);
+    }
+
+    const newData = specificClass ? [...selectedClasses, {...specificClass}] : [...selectedClasses, ...actionClasses]
 
     // Persist selected courses to localStorage
-    localStorage.setItem('selectedCourses', JSON.stringify([...selectedClasses, ...actionClasses]));
-    setSelectedClasses([...selectedClasses, ...actionClasses]);
+    localStorage.setItem('selectedCourses', JSON.stringify(newData));
+    setSelectedClasses(newData);
   };
 
   const handleDeleteSelectedCourses = () => {
@@ -124,6 +131,11 @@ export const ClassTable: React.FC<ClassTableProps> = ({
     }
   }
 
+  const handleAddCustomClass = (data) => {
+    console.log(data)
+    handleAddSelectedCourses({specificClass: data})
+  }
+
   useEffect(() => {
     setActionClasses([]);
   }, [currentPage, courses]);
@@ -183,9 +195,19 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         <TableBody>
           {courses.length === 0 && (
             <TableRow>
-              <div className='p-4'>
-                {enableAddClasses ? "找不到課程" : "還沒有選擇的課程"}
-              </div>
+              <TableCell>
+                <></>
+              </TableCell>
+              <TableCell>
+                <>
+                  {enableAddClasses ? <>
+                    找不到課程<br/>
+                    <div className='mt-2'>
+                      <AddCustomClassBtn handleAddCustomClass={handleAddCustomClass} />
+                    </div>
+                  </> : "還沒有加入課程"}
+                </>
+              </TableCell>
             </TableRow>
           )}
           {courses.map((course) => (
@@ -209,7 +231,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
               </TableCell>
               <TableCell>
                 <span className='text-base'>{course.中文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</span><br />
-                <span className='text-xs text-gray-400'>{course.英文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</span>
+                <span className='text-xs text-gray-400'>{!!course.英文課程名稱 && course.英文課程名稱.replace(/(?:\[.*?\]|\(.*?\))/g, '')}</span>
               </TableCell>
               <TableCell>{course.系所}</TableCell>
               <TableCell>{course.學分}</TableCell>
@@ -238,15 +260,18 @@ export const ClassTable: React.FC<ClassTableProps> = ({
       <div className="flex mt-4 space-x-4">
         <div className='flex-1'>
           {!enableAddClasses && (
-            <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
-              <DownloadIcon /> CSV
-            </Button>
+            <div className="flex space-x-2">
+              <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
+                <DownloadIcon /> CSV
+              </Button>
+              <AddCustomClassBtn handleAddCustomClass={handleAddCustomClass} />
+            </div>
           )}
         </div>
         <div>
           {enableAddClasses ? (
             <Button
-              onClick={handleAddSelectedCourses}
+              onClick={() => handleAddSelectedCourses({})}
               disabled={actionClasses.length === 0}
             >
               加入課表
@@ -270,6 +295,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
                   onClick={handleAddTag}
                   disabled={actionClasses.length === 0 || !tagInput.trim()}
                 >
+                  <TagsIcon />
                   新增標籤
                 </Button>
                 <Button
@@ -277,6 +303,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
                   disabled={actionClasses.length === 0}
                   className="bg-red-500 hover:bg-red-600"
                 >
+                  <Trash2 />
                   刪除課程
                 </Button>
               </div>

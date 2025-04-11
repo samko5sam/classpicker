@@ -9,7 +9,7 @@ import CoursesPerPageSelector from './CoursesPerPageSelector';
 export interface Course {
   開課序號: number;
   中文課程名稱: string;
-  英文課程名稱: string;
+  英文課程名稱?: string;
   系所: string;
   學分: number;
   教師: string;
