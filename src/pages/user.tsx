@@ -16,7 +16,7 @@ const UserPage: React.FC = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4">
             <img
-              src={user.picture?.data.url}//"https://via.placeholder.com/150"
+              src={user.picture?.data.url}
               alt="User Avatar"
               className="w-20 h-20 rounded-full mr-4"
             />
