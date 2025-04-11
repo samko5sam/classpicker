@@ -54,7 +54,7 @@ const AnnouncementModal = () => {
               {allAnnouncements.map((announcement) => (
                 <div key={announcement.id} className="border p-4 rounded-md">
                   <h3 className="font-bold text-lg">{announcement.title}</h3>
-                  <p>{announcement.content}</p>
+                  <p className="whitespace-pre-line">{announcement.content}</p>
                   <p className="text-sm text-gray-500">{new Date(announcement.timestamp).toLocaleDateString()}</p>
                 </div>
               ))}
