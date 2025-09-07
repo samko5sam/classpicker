@@ -6,7 +6,7 @@ const IndexPage: React.FC = () => {
 
   useEffect(() => {
     // Redirect the user to the '/map' page when the index page loads
-    navigate('/map');
+    navigate('/classtable');
   }, [navigate]);
 
   return (

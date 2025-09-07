@@ -54,7 +54,7 @@ const ClasstablePage: FC = () => {
   const [showPeriodsTime, setShowPeriodsTime] = useState(false);
   const [showPlace, setShowPlace] = useState(true);
   const [scheduleConflict, setScheduleConflict] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const periodsTransformObj = {
     'A': '11',

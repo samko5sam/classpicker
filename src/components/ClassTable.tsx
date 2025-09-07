@@ -257,8 +257,8 @@ export const ClassTable: React.FC<ClassTableProps> = ({
         </TableBody>
       </Table>
 
-      <div className="flex mt-4 space-x-4">
-        <div className='flex-1'>
+      <div className="flex flex-col-reverse sm:flex-row">
+        <div className='flex-1 mt-4'>
           {!enableAddClasses && (
             <div className="flex space-x-2">
               <Button disabled={selectedClasses.length == 0} onClick={downloadCSV} variant='outline'>
@@ -268,7 +268,7 @@ export const ClassTable: React.FC<ClassTableProps> = ({
             </div>
           )}
         </div>
-        <div>
+        <div className='flex-1 flex justify-end mt-4'>
           {enableAddClasses ? (
             <Button
               onClick={() => handleAddSelectedCourses({})}
@@ -278,13 +278,13 @@ export const ClassTable: React.FC<ClassTableProps> = ({
           </Button>
           ) : (
             <>
-              <div className="flex space-x-2">
+              <div className="flex-1 flex space-x-0 sm:space-x-2 sm:flex-row sm:space-y-0 space-y-2 flex-col justify-end">
                 <Input
                   type="text"
                   placeholder="輸入標籤名稱"
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
-                  className="w-32"
+                  className="sm:w-32 w-full"
                   onKeyDown={(e) => {
                     if (e.key.toLocaleLowerCase() === 'enter' && tagInput.trim() && actionClasses.length > 0) {
                       handleAddTag();

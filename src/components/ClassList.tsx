@@ -6,6 +6,8 @@ import { FilterDropdown, SearchBar } from './SearchAndFilter';
 import { listorder } from '../constants/listorder';
 import CoursesPerPageSelector from './CoursesPerPageSelector';
 
+
+// TODO: 開課序號應固定4位數
 export interface Course {
   開課序號: number;
   中文課程名稱: string;
