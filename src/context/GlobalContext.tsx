@@ -105,7 +105,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const loadFB = async () => {
     FacebookLoginClient.clear();
     await FacebookLoginClient.loadSdk('en_US');
-    FacebookLoginClient.init({ appId: fbAppId, version: 'v9.0' });
+    FacebookLoginClient.init({ appId: fbAppId, version: 'v21.0' });
     FacebookLoginClient.getLoginStatus((res:LoginResponse) => {
       if (res.status === "connected"){
         setIsAuthenticated(true);
