@@ -19,14 +19,14 @@ import FacebookLoginButton from "./FacebookLoginButton"
 // Menu items.
 const items = [
   {
-    title: "選課地圖",
-    url: "/map",
-    icon: MapIcon,
-  },
-  {
     title: "課表",
     url: "/classtable",
     icon: Table2,
+  },
+  {
+    title: "選課地圖",
+    url: "/map",
+    icon: MapIcon,
   },
   {
     title: "使用者",

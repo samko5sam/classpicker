@@ -37,15 +37,15 @@ const Navbar: React.FC<Props> = ({ setMapCenter, setMapZoom, hideNavbar = false 
       <div className="flex items-center space-x-4">
         <SidebarTrigger />
 
-        {!isMapPath && (
-          <Link to="/map" className="text-gray-600 hover:text-gray-800 focus:outline-none">
-            <MapIcon />
-          </Link>
-        )}
-
         {!isClassTablePath && (
           <Link to="/classtable" className="text-gray-600 hover:text-gray-800 focus:outline-none">
             <Table2 />
+          </Link>
+        )}
+
+        {!isMapPath && (
+          <Link to="/map" className="text-gray-600 hover:text-gray-800 focus:outline-none">
+            <MapIcon />
           </Link>
         )}
       </div>
